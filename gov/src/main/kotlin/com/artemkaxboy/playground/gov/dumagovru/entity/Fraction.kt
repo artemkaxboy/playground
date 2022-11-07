@@ -37,15 +37,13 @@ data class Fraction(
     override fun toString(): String {
         return this::class.simpleName + "(id = $id , shortTitle = $shortTitle )"
     }
-
-    companion object {
-        fun fromDto(dto: FractionDto): Fraction = Fraction(
-            id = dto.id,
-            description = dto.description,
-            title = dto.title,
-            shortTitle = dto.shortTitle,
-            urlWebsite = dto.urlWebsite,
-            type = dto.type,
-        )
-    }
 }
+
+fun FractionDto.toEntity() = Fraction(
+    id = id,
+    description = description,
+    title = title,
+    shortTitle = shortTitle,
+    urlWebsite = urlWebsite,
+    type = type,
+)

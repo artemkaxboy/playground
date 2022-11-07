@@ -35,13 +35,11 @@ data class Country(
     override fun toString(): String {
         return this::class.simpleName + "(id = $id , title = $title )"
     }
-
-    companion object {
-        fun fromDto(dto: CountryDto) = Country(
-            id = dto.id,
-            title = dto.title,
-            url = dto.url,
-            associated = dto.associated,
-        )
-    }
 }
+
+fun CountryDto.toEntity() = Country(
+    id = id,
+    title = title,
+    url = url,
+    associated = associated,
+)

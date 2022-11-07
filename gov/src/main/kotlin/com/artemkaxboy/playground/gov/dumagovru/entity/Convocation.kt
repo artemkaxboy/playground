@@ -30,12 +30,10 @@ data class Convocation(
     override fun toString(): String {
         return this::class.simpleName + "(id = $id , numGenitive = $numGenitive )"
     }
-
-    companion object {
-        fun fromDto(dto: ConvocationDto) = Convocation(
-            id = dto.id,
-            deputiesUrl = dto.deputiesUrl,
-            numGenitive = dto.numGenitive,
-        )
-    }
 }
+
+fun ConvocationDto.toEntity() = Convocation(
+    id = id,
+    deputiesUrl = deputiesUrl,
+    numGenitive = numGenitive,
+)

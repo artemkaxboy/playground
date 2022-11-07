@@ -1,31 +1,23 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.dto.CommissionDto
+import com.artemkaxboy.playground.gov.dumagovru.dto.RegionDto
 import org.hibernate.Hibernate
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 
 @Entity
-data class Commission(
+data class Region(
 
     @Id
-    val id: Long,
+    val id: String,
     @Column(columnDefinition = "TEXT")
     val title: String,
-    @Column(columnDefinition = "TEXT")
-    val description: String,
-    @Column(columnDefinition = "TEXT")
-    val type: String,
-    @Column(name = "url_website", columnDefinition = "TEXT")
-    val urlWebsite: String,
-    @Column(name = "short_title", nullable = true, columnDefinition = "TEXT")
-    val shortTitle: String?,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as Commission
+        other as Region
 
         return id == other.id
     }
@@ -38,11 +30,7 @@ data class Commission(
     }
 }
 
-fun CommissionDto.toEntity() = Commission(
+fun RegionDto.toEntity() = Region(
     id = id,
     title = title,
-    description = description,
-    type = type,
-    urlWebsite = urlWebsite,
-    shortTitle = shortTitle,
 )

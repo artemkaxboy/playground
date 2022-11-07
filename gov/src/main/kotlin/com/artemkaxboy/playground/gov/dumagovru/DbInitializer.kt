@@ -1,10 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru
 
 import com.artemkaxboy.playground.gov.dumagovru.dto.ApplicationDataDto
-import com.artemkaxboy.playground.gov.dumagovru.entity.Commission
-import com.artemkaxboy.playground.gov.dumagovru.entity.Convocation
-import com.artemkaxboy.playground.gov.dumagovru.entity.Country
-import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
 import com.artemkaxboy.playground.gov.dumagovru.entity.toEntity
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
@@ -13,6 +9,7 @@ import com.artemkaxboy.playground.gov.dumagovru.repository.FractionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.IntCommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.IntGroupRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
+import com.artemkaxboy.playground.gov.dumagovru.repository.RegionRepository
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Component
@@ -29,6 +26,7 @@ class DbInitializer(
     private val intCommissionRepository: IntCommissionRepository,
     private val intGroupRepository: IntGroupRepository,
     private val personRepository: PersonRepository,
+    private val regionRepository: RegionRepository,
 ) {
 
     @Transactional
@@ -47,21 +45,18 @@ class DbInitializer(
         val json = Json { ignoreUnknownKeys = true }
         val data = json.decodeFromString<ApplicationDataDto>(jsonString)
 
-        try {
-            data.commissions.map { Commission.fromDto(it) }.let { commissionRepository.saveAll(it) }
-            data.convocations.map { Convocation.fromDto(it) }.let { convocationRepository.saveAll(it) }
-            data.countries.map { Country.fromDto(it) }.let { countryRepository.saveAll(it) }
-            data.fractions.map { Fraction.fromDto(it) }.let { fractionRepository.saveAll(it) }
-            data.intCommissions.map { it.toEntity() }
-                .let { intCommissionRepository.saveAll(it) }
-            data.intGroups.map { it.toEntity() }
-                .let { intGroupRepository.saveAll(it) }
-            data.persons.map { it.toEntity() }
-                .let { personRepository.saveAll(it) }
-            data.regions
-        } finally {
-            println("Done")
-        }
+        data.commissions.map { it.toEntity() }.let { commissionRepository.saveAll(it) }
+        data.convocations.map { it.toEntity() }.let { convocationRepository.saveAll(it) }
+        data.countries.map { it.toEntity() }.let { countryRepository.saveAll(it) }
+        data.fractions.map { it.toEntity() }.let { fractionRepository.saveAll(it) }
+        data.intCommissions.map { it.toEntity() }
+            .let { intCommissionRepository.saveAll(it) }
+        data.intGroups.map { it.toEntity() }
+            .let { intGroupRepository.saveAll(it) }
+        data.persons.map { it.toEntity() }
+            .let { personRepository.saveAll(it) }
+        data.regions.map { it.toEntity() }
+            .let { regionRepository.saveAll(it) }
     }
 
     fun getFileText(filename: String): String { // TODO use stream
