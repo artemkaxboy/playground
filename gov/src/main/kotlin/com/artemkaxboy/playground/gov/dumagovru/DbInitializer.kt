@@ -45,6 +45,9 @@ class DbInitializer(
         val json = Json { ignoreUnknownKeys = true }
         val data = json.decodeFromString<ApplicationDataDto>(jsonString)
 
+        data.regions.map { it.toEntity() } // must be before fractions
+            .let { regionRepository.saveAll(it) }
+
         data.commissions.map { it.toEntity() }.let { commissionRepository.saveAll(it) }
         data.convocations.map { it.toEntity() }.let { convocationRepository.saveAll(it) }
         data.countries.map { it.toEntity() }.let { countryRepository.saveAll(it) }
@@ -55,13 +58,17 @@ class DbInitializer(
             .let { intGroupRepository.saveAll(it) }
         data.persons.map { it.toEntity() }
             .let { personRepository.saveAll(it) }
-        data.regions.map { it.toEntity() }
-            .let { regionRepository.saveAll(it) }
     }
 
     fun getFileText(filename: String): String { // TODO use stream
         return javaClass.classLoader.getResource(filename)?.readText()
             ?: throw IllegalArgumentException("File $filename not found")
+    }
+
+    @Transactional
+    fun test() {
+        val all = personRepository.findAll().filter { it.fractionPositions.size > 1 }
+        all.forEach { println(it) }
     }
 
 

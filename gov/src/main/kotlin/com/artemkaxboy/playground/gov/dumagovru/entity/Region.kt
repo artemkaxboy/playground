@@ -11,8 +11,9 @@ data class Region(
 
     @Id
     val id: String,
+
     @Column(columnDefinition = "TEXT")
-    val title: String,
+    val title: String? = null,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

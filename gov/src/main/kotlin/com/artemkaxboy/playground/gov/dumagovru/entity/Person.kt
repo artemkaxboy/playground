@@ -48,7 +48,7 @@ data class Person(
     val staffOrg: StaffOrg?,
 
     @Column(name = "fraction_position")
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL])
     val fractionPositions: Set<FractionPosition> = emptySet(),
 
 //    @Column(name = "staff_positions")
@@ -72,7 +72,7 @@ data class Person(
 }
 
 fun PersonDto.toEntity(): Person {
-    return Person(
+    val person = Person(
         id = id,
         firstName = firstName,
         secondName = secondName,
@@ -84,4 +84,6 @@ fun PersonDto.toEntity(): Person {
         url = url,
         staffOrg = staffOrg?.toEntity(),
     )
+    val fractionPositions = fractionPositions.map { it.toEntity(person) }.toSet()
+    return person.copy(fractionPositions = fractionPositions)
 }
