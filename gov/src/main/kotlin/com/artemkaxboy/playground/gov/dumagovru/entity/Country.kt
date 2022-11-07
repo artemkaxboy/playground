@@ -1,6 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.converter.StringSetConverter
+import com.artemkaxboy.playground.gov.dumagovru.converter.StringSetStringSimpleConverter
 import com.artemkaxboy.playground.gov.dumagovru.dto.CountryDto
 import org.hibernate.Hibernate
 import javax.persistence.Column
@@ -13,14 +13,18 @@ data class Country(
 
     @Id
     val id: String,
+
     @Column(columnDefinition = "TEXT")
     val title: String = "",
+
     @Column(columnDefinition = "TEXT")
     val url: String? = null,
+
     @Column(columnDefinition = "TEXT")
-    @Convert(converter = StringSetConverter::class)
+    @Convert(converter = StringSetStringSimpleConverter::class)
     val associated: Set<String>? = null,
 ) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
@@ -37,7 +41,7 @@ data class Country(
     }
 }
 
-fun CountryDto.toEntity() = Country(
+fun CountryDto.toEntity(): Country = Country(
     id = id,
     title = title,
     url = url,

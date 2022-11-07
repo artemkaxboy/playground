@@ -6,7 +6,10 @@ import kotlinx.serialization.Serializable
 data class CountryDto(
 
     val id: String,
+
     val title: String,
+
     val url: String?,
+
     val associated: Set<String>?,
 )
