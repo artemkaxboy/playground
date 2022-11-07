@@ -11,11 +11,14 @@ data class Convocation(
 
     @Id
     val id: Long,
+
     @Column(name = "deputies_url", columnDefinition = "TEXT")
     val deputiesUrl: String,
+
     @Column(name = "num_genitive", columnDefinition = "TEXT")
     val numGenitive: String,
 ) {
+    
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
