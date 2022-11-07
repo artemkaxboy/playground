@@ -11,14 +11,19 @@ data class Fraction(
 
     @Id
     val id: Long,
+
     @Column(columnDefinition = "TEXT")
     val description: String? = null,
+
     @Column(columnDefinition = "TEXT")
     val title: String? = null,
+
     @Column(name = "short_title", columnDefinition = "TEXT")
     val shortTitle: String? = null,
+
     @Column(name = "url_website", columnDefinition = "TEXT")
     val urlWebsite: String? = null,
+
     @Column(columnDefinition = "TEXT")
     val type: String? = null,
 ) {

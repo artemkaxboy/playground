@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class FractionDto(
 
     val id: Long,
+
     val description: String?,
 
     val title: String,
