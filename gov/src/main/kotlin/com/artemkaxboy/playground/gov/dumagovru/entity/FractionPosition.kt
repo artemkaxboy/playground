@@ -71,7 +71,7 @@ data class FractionPosition(
         return this::class.simpleName + "(org = $org , orgTitle = $orgTitle , convocation = $convocation )"
     }
 
-    class FractionPositionId(
+    data class FractionPositionId(
         @Id
         val org: Long = 0,
         @Id

@@ -64,7 +64,7 @@ data class CommissionPosition(
         return this::class.simpleName + "(org = $org , orgTitle = $orgTitle , positionText = $positionText , personId = $personId )"
     }
 
-    class CommissionPositionId(
+    data class CommissionPositionId(
 
         @Id
         val org: Long = 0,
