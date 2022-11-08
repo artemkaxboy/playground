@@ -16,10 +16,10 @@ data class Commission(
     val title: String,
 
     @Column(columnDefinition = "TEXT")
-    val description: String,
+    val type: String,
 
     @Column(columnDefinition = "TEXT")
-    val type: String,
+    val description: String,
 
     @Column(name = "url_website", columnDefinition = "TEXT")
     val urlWebsite: String,
@@ -44,7 +44,7 @@ data class Commission(
     }
 }
 
-fun CommissionDto.toEntity() = Commission(
+fun CommissionDto.toEntity(): Commission = Commission(
     id = id,
     title = title,
     description = description,

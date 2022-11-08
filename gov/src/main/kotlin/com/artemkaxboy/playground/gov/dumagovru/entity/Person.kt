@@ -7,6 +7,7 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 
@@ -16,38 +17,45 @@ data class Person(
     @Id
     val id: Long,
 
-//    @Column(name = "commission_positions")
-//    val commissionPositions: Set<CommissionPositionDto>,
+    @Column(name = "commission_positions")
+    @OneToMany(cascade = [CascadeType.ALL])
+    @JoinTable(
+        name = "person_to_commission_position",
+        joinColumns = [JoinColumn(name = "id")],
+        inverseJoinColumns = [JoinColumn(name = "org"),
+            JoinColumn(name = "person_id")]
+    )
+    val commissionPositions: Set<CommissionPosition> = emptySet(),
 
     @Column(name = "first_name", columnDefinition = "TEXT")
-    val firstName: String,
+    val firstName: String = "",
 
     @Column(name = "second_name", columnDefinition = "TEXT")
-    val secondName: String,
+    val secondName: String = "",
 
     @Column(name = "last_name", columnDefinition = "TEXT")
-    val lastName: String,
+    val lastName: String = "",
 
     @Column(columnDefinition = "TEXT")
-    val photo: String?,
+    val photo: String? = null,
 
     @Column(name = "original_ais_person_id")
-    val originalAisPersonId: Long?,
+    val originalAisPersonId: Long? = null,
 
     @Column(columnDefinition = "TEXT")
-    val lead: String,
+    val lead: String = "",
 
     @Column(columnDefinition = "TEXT")
-    val title: String,
+    val title: String = "",
 
     @Column(columnDefinition = "TEXT")
-    val url: String,
+    val url: String = "",
 
     @JoinColumn(name = "staff_org")
     @ManyToOne(cascade = [CascadeType.ALL])
-    val staffOrg: StaffOrg?,
+    val staffOrg: StaffOrg? = null,
 
-    @Column(name = "fraction_position")
+    @JoinColumn(name = "person_id")
     @OneToMany(cascade = [CascadeType.ALL])
     val fractionPositions: Set<FractionPosition> = emptySet(),
 
@@ -72,7 +80,8 @@ data class Person(
 }
 
 fun PersonDto.toEntity(): Person {
-    val person = Person(
+    val idPerson = Person(id = id)
+    return Person(
         id = id,
         firstName = firstName,
         secondName = secondName,
@@ -83,7 +92,7 @@ fun PersonDto.toEntity(): Person {
         title = title,
         url = url,
         staffOrg = staffOrg?.toEntity(),
+        commissionPositions = commissionPositions.map { it.toEntity(idPerson) }.toSet(),
+        fractionPositions = fractionPositions.map { it.toEntity(idPerson) }.toSet(),
     )
-    val fractionPositions = fractionPositions.map { it.toEntity(person) }.toSet()
-    return person.copy(fractionPositions = fractionPositions)
 }

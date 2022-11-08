@@ -8,14 +8,18 @@ import kotlinx.serialization.Serializable
 data class FractionPositionDto(
 
     val regions: Set<String> = emptySet(),
+
     @SerialName("place_in_hall_column")
     val placeInHallColumn: Int?,
+
     @SerialName("place_in_hall_row")
     val placeInHallRow: Int?,
 
     val actual: Boolean,
+
     @SerialName("regions_title")
     val regionsTitle: String,
+
     @SerialName("org_title")
     val orgTitle: String?,
 

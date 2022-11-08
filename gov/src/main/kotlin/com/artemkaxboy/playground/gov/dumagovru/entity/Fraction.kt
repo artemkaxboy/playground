@@ -18,14 +18,14 @@ data class Fraction(
     @Column(columnDefinition = "TEXT")
     val title: String? = null,
 
+    @Column(columnDefinition = "TEXT")
+    val type: String? = null,
+
     @Column(name = "short_title", columnDefinition = "TEXT")
     val shortTitle: String? = null,
 
     @Column(name = "url_website", columnDefinition = "TEXT")
     val urlWebsite: String? = null,
-
-    @Column(columnDefinition = "TEXT")
-    val type: String? = null,
 ) {
 
     override fun equals(other: Any?): Boolean {

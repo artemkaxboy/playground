@@ -17,19 +17,20 @@ data class IntGroup(
     val id: Long,
 
     @Column(name = "url_website", columnDefinition = "TEXT")
-    val urlWebsite: String,
+    val urlWebsite: String = "",
 
     @Column(columnDefinition = "TEXT")
-    val lead: String,
+    val lead: String = "",
+
     @Column(columnDefinition = "TEXT")
-    val title: String,
+    val title: String = "",
 
     @Column(name = "countries_ids", columnDefinition = "TEXT")
     @Convert(converter = StringSetConverter::class) // TODO add link one-to-many
-    val countries: Set<String>,
+    val countries: Set<String> = emptySet(),
 
     @OneToMany(mappedBy = "intGroup", cascade = [CascadeType.ALL])
-    val positions: Set<IntGroupPosition>,
+    val positions: Set<IntGroupPosition> = emptySet(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -47,14 +48,11 @@ data class IntGroup(
     }
 }
 
-fun IntGroupDto.toEntity(): IntGroup {
-    val group = IntGroup(
-        id = id,
-        urlWebsite = urlWebsite,
-        lead = lead,
-        title = title,
-        countries = countries,
-        emptySet(),
-    )
-    return group.copy(positions = positions.map { it.toEntity(group) }.toSet())
-}
+fun IntGroupDto.toEntity() = IntGroup(
+    id = id,
+    urlWebsite = urlWebsite,
+    lead = lead,
+    title = title,
+    countries = countries,
+    positions = positions.map { it.toEntity(IntGroup(id)) }.toSet(),
+)

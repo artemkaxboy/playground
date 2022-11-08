@@ -17,19 +17,20 @@ data class IntCommission(
     val id: Long,
 
     @Column(name = "url_website", columnDefinition = "TEXT")
-    val urlWebsite: String,
+    val urlWebsite: String = "",
 
     @Column(columnDefinition = "TEXT")
-    val lead: String,
+    val lead: String = "",
+
     @Column(columnDefinition = "TEXT")
-    val title: String,
+    val title: String = "",
 
     @Column(name = "countries_ids", columnDefinition = "TEXT")
     @Convert(converter = StringSetConverter::class) // TODO add link one-to-many
-    val countries: Set<String>,
+    val countries: Set<String> = emptySet(),
 
     @OneToMany(mappedBy = "intCommission", cascade = [CascadeType.ALL])
-    val positions: Set<IntCommissionPosition>,
+    val positions: Set<IntCommissionPosition> = emptySet(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -47,14 +48,11 @@ data class IntCommission(
     }
 }
 
-fun IntCommissionDto.toEntity(): IntCommission {
-    val commission = IntCommission(
-        id = id,
-        urlWebsite = urlWebsite,
-        lead = lead,
-        title = title,
-        countries = countries,
-        emptySet(),
-    )
-    return commission.copy(positions = positions.map { it.toEntity(commission) }.toSet())
-}
+fun IntCommissionDto.toEntity() = IntCommission(
+    id = id,
+    urlWebsite = urlWebsite,
+    lead = lead,
+    title = title,
+    countries = countries,
+    positions = positions.map { it.toEntity(IntCommission(id)) }.toSet(),
+)

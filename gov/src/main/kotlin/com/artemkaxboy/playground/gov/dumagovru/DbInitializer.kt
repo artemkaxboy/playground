@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Component
 import javax.transaction.Transactional
 
-const val FILENAME = "duma-gov-ru/data.json"
+const val FILENAME = "duma-gov-ru/test-data.json"
 
 @Component
 class DbInitializer(

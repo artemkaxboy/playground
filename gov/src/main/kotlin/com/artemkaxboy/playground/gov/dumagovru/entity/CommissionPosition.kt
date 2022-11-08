@@ -1,6 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.dto.FractionPositionDto
+import com.artemkaxboy.playground.gov.dumagovru.dto.CommissionPositionDto
 import org.hibernate.Hibernate
 import java.io.Serializable
 import javax.persistence.Column
@@ -13,53 +13,46 @@ import javax.persistence.JoinTable
 import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
 
-@IdClass(FractionPosition.FractionPositionId::class)
+@IdClass(CommissionPosition.CommissionPositionId::class)
 @Entity
-data class FractionPosition(
+data class CommissionPosition(
 
     @Id
     val org: Long,
 
     @Id
-    val convocation: Int,
-
-    @JoinColumn(name = "person_id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    val person: Person?,
-
-    @Id
     @Column(name = "person_id")
-    val personId: Long = person?.id ?: 0,
+    val personId: Long,
+
+    @ManyToOne
+    @JoinColumn(name = "person_id", insertable = false, updatable = false)
+    val person: Person? = null,
+
+    @Column(name = "regions_title", columnDefinition = "TEXT")
+    val regionsTitle: String = "",
+
+    @Column(name = "org_title", columnDefinition = "TEXT")
+    val orgTitle: String = "",
+
+    @Column(name = "position_type", columnDefinition = "TEXT")
+    val positionType: String? = null,
+
+    @Column(name = "position_text", columnDefinition = "TEXT")
+    val positionText: String = "",
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "fraction_position_to_region",
+        name = "commission_position_to_region",
         joinColumns = [JoinColumn(name = "org"),
-            JoinColumn(name = "convocation"),
             JoinColumn(name = "person_id")],
         inverseJoinColumns = [JoinColumn(name = "id")]
     )
     val regions: Set<Region> = emptySet(),
-
-    @Column(name = "place_in_hall_column", columnDefinition = "TEXT")
-    val placeInHallColumn: Int?,
-
-    @Column(name = "place_in_hall_row", columnDefinition = "TEXT")
-    val placeInHallRow: Int?,
-
-    val actual: Boolean,
-
-    @Column(name = "regions_title", columnDefinition = "TEXT")
-    val regionsTitle: String,
-
-    @Column(name = "org_title", columnDefinition = "TEXT")
-    val orgTitle: String?,
 ) {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as FractionPosition
+        other as CommissionPosition
 
         return org == other.org
     }
@@ -68,28 +61,27 @@ data class FractionPosition(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(org = $org , orgTitle = $orgTitle , convocation = $convocation )"
+        return this::class.simpleName + "(org = $org , orgTitle = $orgTitle , positionText = $positionText , personId = $personId )"
     }
 
-    class FractionPositionId(
+    class CommissionPositionId(
+
         @Id
         val org: Long = 0,
-        @Id
-        val convocation: Int = 0,
+
         @Id
         @Column(name = "person_id")
         val personId: Long = 0,
     ) : Serializable
 }
 
-fun FractionPositionDto.toEntity(person: Person) = FractionPosition(
-    placeInHallColumn = placeInHallColumn,
-    placeInHallRow = placeInHallRow,
-    actual = actual,
+fun CommissionPositionDto.toEntity(person: Person) = CommissionPosition(
     regionsTitle = regionsTitle,
     orgTitle = orgTitle,
+    positionType = positionType,
+    positionText = positionText,
     org = org,
-    convocation = convocation,
+    personId = person.id,
     person = person,
     regions = regions.map { Region(it) }.toSet(),
 )
