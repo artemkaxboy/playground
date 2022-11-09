@@ -1,12 +1,13 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.converter.StringSetStringSimpleConverter
 import com.artemkaxboy.playground.gov.dumagovru.dto.CountryDto
 import org.hibernate.Hibernate
 import javax.persistence.Column
-import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
 
 @Entity
 data class Country(
@@ -20,9 +21,13 @@ data class Country(
     @Column(columnDefinition = "TEXT")
     val url: String? = null,
 
-    @Column(columnDefinition = "TEXT")
-    @Convert(converter = StringSetStringSimpleConverter::class)
-    val associated: Set<String>? = null,
+    @ManyToMany
+    @JoinTable(
+        name = "country_to_country",
+        joinColumns = [JoinColumn(name = "from_id")],
+        inverseJoinColumns = [JoinColumn(name = "to_id")]
+    )
+    val associated: Set<Country> = emptySet()
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -45,5 +50,5 @@ fun CountryDto.toEntity(): Country = Country(
     id = id,
     title = title,
     url = url,
-    associated = associated,
+    associated = associated?.map { Country(it) }?.toSet() ?: emptySet(),
 )

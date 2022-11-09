@@ -13,9 +13,9 @@ import com.artemkaxboy.playground.gov.dumagovru.repository.RegionRepository
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Component
-import javax.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 
-const val FILENAME = "duma-gov-ru/test-data.json"
+const val FILENAME = "duma-gov-ru/data.json"
 
 @Component
 class DbInitializer(
@@ -30,7 +30,6 @@ class DbInitializer(
 ) {
 
     @Transactional
-    @org.springframework.transaction.annotation.Transactional
     fun init() {
 //        val pos = IntCommissionPosition(3, "title", intCommission = null, intCommissionId = 1, persons = emptySet())
 //        val ent = IntCommission(1, "url", "lead", "title", emptySet(), setOf(pos))
@@ -47,10 +46,10 @@ class DbInitializer(
 
         data.regions.map { it.toEntity() } // must be before fractions
             .let { regionRepository.saveAll(it) }
+        data.countries.map { it.toEntity() }.let { countryRepository.saveAllTwoSteps(it) }
 
         data.commissions.map { it.toEntity() }.let { commissionRepository.saveAll(it) }
         data.convocations.map { it.toEntity() }.let { convocationRepository.saveAll(it) }
-        data.countries.map { it.toEntity() }.let { countryRepository.saveAll(it) }
         data.fractions.map { it.toEntity() }.let { fractionRepository.saveAll(it) }
         data.intCommissions.map { it.toEntity() }
             .let { intCommissionRepository.saveAll(it) }

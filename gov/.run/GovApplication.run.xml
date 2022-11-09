@@ -3,10 +3,12 @@
     <option name="ACTIVE_PROFILES" />
     <additionalParameters>
       <param>
+        <option name="enabled" value="true" />
         <option name="name" value="spring.jpa.show-sql" />
         <option name="value" value="true" />
       </param>
       <param>
+        <option name="enabled" value="true" />
         <option name="name" value="spring.jpa.properties.hibernate.format_sql" />
         <option name="value" value="true" />
       </param>
