@@ -69,6 +69,4 @@ class DbInitializer(
         val all = personRepository.findAll().filter { it.fractionPositions.size > 1 }
         all.forEach { println(it) }
     }
-
-
 }
