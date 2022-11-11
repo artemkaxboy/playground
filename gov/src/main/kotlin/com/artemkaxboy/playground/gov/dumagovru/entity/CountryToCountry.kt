@@ -18,7 +18,7 @@ data class CountryToCountry(
     val from: Country? = null,
 
     @Id
-    @Column(name = "from_id")
+    @Column(name = "from_id", columnDefinition = "TEXT")
     val fromId: String = from?.id ?: "",
 
     @ManyToOne
@@ -26,7 +26,7 @@ data class CountryToCountry(
     val to: Country? = null,
 
     @Id
-    @Column(name = "to_id")
+    @Column(name = "to_id", columnDefinition = "TEXT")
     val toId: String = to?.id ?: "",
 ) {
 

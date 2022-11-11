@@ -2,7 +2,10 @@ package com.artemkaxboy.playground.gov.dumagovru.entity
 
 import com.artemkaxboy.playground.gov.dumagovru.dto.CommissionPositionDto
 import org.hibernate.Hibernate
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -20,13 +23,13 @@ data class CommissionPosition(
     @Id
     val org: Long,
 
-    @Id
-    @Column(name = "person_id")
-    val personId: Long,
-
     @ManyToOne
     @JoinColumn(name = "person_id", insertable = false, updatable = false)
     val person: Person? = null,
+
+    @Id
+    @Column(name = "person_id")
+    val personId: Long = person?.id ?: 0,
 
     @Column(name = "regions_title", columnDefinition = "TEXT")
     val regionsTitle: String = "",
@@ -40,13 +43,14 @@ data class CommissionPosition(
     @Column(name = "position_text", columnDefinition = "TEXT")
     val positionText: String = "",
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinTable(
         name = "commission_position_to_region",
         joinColumns = [JoinColumn(name = "org"),
             JoinColumn(name = "person_id")],
-        inverseJoinColumns = [JoinColumn(name = "id")]
+        inverseJoinColumns = [JoinColumn(name = "region_id")]
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     val regions: Set<Region> = emptySet(),
 ) {
     override fun equals(other: Any?): Boolean {
