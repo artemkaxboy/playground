@@ -1,9 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru
 
 import com.artemkaxboy.playground.gov.dumagovru.dto.ApplicationDataDto
-import com.artemkaxboy.playground.gov.dumagovru.entity.Commission
-import com.artemkaxboy.playground.gov.dumagovru.entity.CommissionPosition
-import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
@@ -62,12 +59,12 @@ class DbInitializer(
 //            .let { personRepository.saveAll(it) }
 
 
-        Commission(1, "commission")
-            .let { commissionRepository.save(it) }
-        Person(1, "Artem", "E", "Kolin", "Artem E Kolin")
-            .let { personRepository.save(it) }
-        CommissionPosition(personId = 1, commissionId = 1, positionText = "position text")
-            .let { commissionPositionRepository.save(it) }
+//        Commission(1, "commission")
+//            .let { commissionRepository.save(it) }
+//        Person(1, "Artem", "E", "Kolin", "Artem E Kolin")
+//            .let { personRepository.save(it) }
+//        CommissionPosition(personId = 1, commissionId = 1, positionText = "position text")
+//            .let { commissionPositionRepository.save(it) }
 
 
     }

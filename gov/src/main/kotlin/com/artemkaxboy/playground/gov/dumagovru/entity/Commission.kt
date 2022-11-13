@@ -19,7 +19,7 @@ data class Commission(
     val shortTitle: String? = null,
 
     @Column(columnDefinition = "TEXT")
-    val description: String = "",
+    val description: String? = null,
 
     @Column(columnDefinition = "TEXT")
     val type: String? = null,
