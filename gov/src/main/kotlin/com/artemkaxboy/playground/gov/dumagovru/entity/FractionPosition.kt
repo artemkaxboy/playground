@@ -1,59 +1,56 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.dto.FractionPositionDto
 import org.hibernate.Hibernate
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
+import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
-import javax.persistence.JoinTable
-import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
 
-@IdClass(FractionPosition.FractionPositionId::class)
 @Entity
+@IdClass(FractionPosition.IdClass::class)
 data class FractionPosition(
 
-    @Id
-    val org: Long,
+    @ManyToOne
+    @JoinColumn(name = "convocation_id", insertable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    val convocation: Convocation? = null,
 
     @Id
-    val convocation: Int,
+    @Column(name = "convocation_id", nullable = false)
+    val convocationId: Long? = convocation?.id,
 
+    @ManyToOne
+    @JoinColumn(name = "fraction_id", insertable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    val fraction: Fraction? = null,
+
+    @Id
+    @Column(name = "fraction_id", nullable = false)
+    val fractionId: Long? = fraction?.id,
+
+    @ManyToOne
     @JoinColumn(name = "person_id", insertable = false, updatable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    val person: Person?,
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    val person: Person? = null,
 
     @Id
-    @Column(name = "person_id")
-    val personId: Long = person?.id ?: 0,
+    @Column(name = "person_id", nullable = false)
+    val personId: Long? = person?.id,
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "fraction_position_to_region",
-        joinColumns = [JoinColumn(name = "org"),
-            JoinColumn(name = "convocation"),
-            JoinColumn(name = "person_id")],
-        inverseJoinColumns = [JoinColumn(name = "id")]
-    )
-    val regions: Set<Region> = emptySet(),
+    @Column(nullable = false)
+    val actual: Boolean = false,
 
-    @Column(name = "place_in_hall_column", columnDefinition = "TEXT")
-    val placeInHallColumn: Int?,
+    @Column(name = "place_in_hall_column")
+    val placeInHallColumn: Int? = null,
 
-    @Column(name = "place_in_hall_row", columnDefinition = "TEXT")
-    val placeInHallRow: Int?,
-
-    val actual: Boolean,
-
-    @Column(name = "regions_title", columnDefinition = "TEXT")
-    val regionsTitle: String,
-
-    @Column(name = "org_title", columnDefinition = "TEXT")
-    val orgTitle: String?,
+    @Column(name = "place_in_hall_row")
+    val placeInHallRow: Int? = null,
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -61,35 +58,39 @@ data class FractionPosition(
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as FractionPosition
 
-        return org == other.org
+        return convocationId == other.convocationId
+                && fractionId == other.fractionId
+                && personId == other.personId
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode(): Int = Objects.hash(convocationId, fractionId, personId);
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(org = $org , orgTitle = $orgTitle , convocation = $convocation )"
+        return this::class.simpleName + "(convocationId = $convocationId , fractionId = $fractionId , personId = $personId , actual = $actual )"
     }
 
-    data class FractionPositionId(
-        @Id
-        val org: Long = 0,
-        @Id
-        val convocation: Int = 0,
-        @Id
-        @Column(name = "person_id")
-        val personId: Long = 0,
-    ) : Serializable
-}
+    data class IdClass(
+        val convocationId: Long,
+        val fractionId: Long,
+        val personId: Long
+    ) : Serializable {
 
-fun FractionPositionDto.toEntity(person: Person) = FractionPosition(
-    placeInHallColumn = placeInHallColumn,
-    placeInHallRow = placeInHallRow,
-    actual = actual,
-    regionsTitle = regionsTitle,
-    orgTitle = orgTitle,
-    org = org,
-    convocation = convocation,
-    person = person,
-    regions = regions.map { Region(it) }.toSet(),
-)
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+            other as FractionPosition
+
+            return convocationId == other.convocationId
+                    && fractionId == other.fractionId
+                    && personId == other.personId
+        }
+
+        override fun hashCode(): Int = Objects.hash(convocationId, fractionId, personId);
+
+        @Override
+        override fun toString(): String {
+            return this::class.simpleName + "(convocationId = $convocationId , fractionId = $fractionId , personId = $personId )"
+        }
+    }
+}

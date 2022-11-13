@@ -3,170 +3,173 @@
 top to bottom direction
 skinparam linetype ortho
 
-class Person {
-   id:  Long
+class person {
+   (PK) id:  Long
    first_name:  String
-   second_name:  String
+   second_name:  String?
    last_name:  String
    title:  String
-   lead:  String
-   original_ais_person_id:  Long
-   photo:  String
-   url:  String
+   lead:  String?
+   original_ais_person_id:  Long?
+   photo:  String?
+   url:  String?
 }
 
-class Commission {
-   id:  Long
-   description:  String
-   short_title:  String
+class commission {
+   (PK) id:  Long
    title:  String
-   type:  String
-   url_website:  String
+   short_title:  String?
+   description:  String?
+   type:  String?
+   url_website:  String?
 }
 
-class CommissionPosition {
-   person_id:  Long
-   commission_id:  Long
+class commission_position {
+   (PK, FK) person_id:  Long
+   (PK, FK) commission_id:  Long
    position_text:  String
-   position_type:  String
-   regions_title:  String
+   position_type:  String?
 }
 
 'main .(delete cascade). secondary
-Person                "1" -[#000000,plain]-> "0..*"  CommissionPosition
-Commission            "1" -[#000000,plain]-> "0..*"  CommissionPosition
+person                "1" -[#000000,plain]-> "0..*"  commission_position
+commission            "1" -[#000000,plain]-> "0..*"  commission_position
 
-class Region {
-   id:  String
+class region {
+   (PK) id:  String
    title:  String
 }
 
-class RegionToCommissionPosition {
-    region_id:  String
-    commission_position_id:  Long
+class region_to_commission_position {
+   (PK, FK) region_id:  String
+   (PK, FK) person_id:  Long
+   (PK, FK) commission_id:  Long
 }
 
-'main .(delete cascade). secondary
-Region               "1" -[#000000,plain]-> "0..*"  RegionToCommissionPosition
-CommissionPosition   "1" -[#000000,plain]-> "0..*"  RegionToCommissionPosition
+region               "1" -[#000000,plain]-> "0..*"  region_to_commission_position
+commission_position  "1" -[#000000,plain]-> "0..*"  region_to_commission_position
 
-class Convocation {
-   id:  Long
-   deputies_url:  String
+class convocation {
+   (PK) id:  Long
    num_genitive:  String
+   deputies_url:  String?
 }
-class Fraction {
-   id:  Long
-   description:  String
-   short_title:  String
+
+class fraction {
+   (PK) id:  Long
    title:  String
-   type:  String
-   url_website:  String
+   short_title:  String?
+   description:  String?
+   type:  String?
+   url_website:  String?
 }
-class FractionPosition {
-   convocation_id:  Long
-   fraction_id:  Long
-   person_id:  Long
+
+class fraction_position {
+   (PK, FK) convocation_id:  Long
+   (PK, FK) fraction_id:  Long
+   (PK, FK) person_id:  Long
    actual:  boolean
-   place_in_hall_column:  Integer
-   place_in_hall_column:  Integer
+   place_in_hall_column:  Integer?
+   place_in_hall_row:  Integer?
 }
 
-Convocation           "1" -[#000000,plain]-> "0..*"  FractionPosition
-Fraction              "1" -[#000000,plain]-> "0..*"  FractionPosition
-Person                "1" -[#000000,plain]-> "0..*"  FractionPosition
+convocation           "1" -[#000000,plain]-> "0..*"  fraction_position
+fraction              "1" -[#000000,plain]-> "0..*"  fraction_position
+person                "1" -[#000000,plain]-> "0..*"  fraction_position
 
-class RegionToFractionPosition {
-    region_id:  String
-    fraction_position_id:  Long
+class region_to_fraction_position {
+    (PK, FK) region_id:  String
+    (PK, FK) fraction_position_id:  Long
 }
 
-Region               "1" -[#000000,plain]-> "0..*"  RegionToFractionPosition
-FractionPosition     "1" -[#000000,plain]-> "0..*"  RegionToFractionPosition
+region               "1" -[#000000,plain]-> "0..*"  region_to_fraction_position
+fraction_position    "1" -[#000000,plain]-> "0..*"  region_to_fraction_position
 
-class Country {
-   id:  String
+class country {
+   (PK) id:  String
    title:  String
-   url:  String
+   url:  String?
 }
-class CountryToCountry {
-   from_id:  String
-   to_id:  String
+
+class country_to_country {
+   (PK, FK) from_id:  String
+   (PK, FK) to_id:  String
 }
 
 'from_id
-Country               "1" -[#000000,plain]-> "0..*"  CountryToCountry
+country               "1" -[#000000,plain]-> "0..*"  country_to_country
 'to_id
-Country               "1" -[#000000,plain]-> "0..*"  CountryToCountry
+country               "1" -[#000000,plain]-> "0..*"  country_to_country
 
-class IntCommission {
-   id:  Long
-   lead:  String
+class int_commission {
+   (PK) id:  Long
    title:  String
-   url_website:  String
+   lead:  String?
+   url_website:  String?
 }
 
-class CountryToIntCommission {
-   country_id:  String
-   int_commission_id:  Long
+class country_to_int_commission {
+   (PK, FK) country_id:  String
+   (PK, FK) int_commission_id:  Long
 }
 
-Country               "1" -[#000000,plain]-> "0..*"  CountryToIntCommission
-IntCommission         "1" -[#000000,plain]-> "0..*"  CountryToIntCommission
+country               "1" -[#000000,plain]-> "0..*"  country_to_int_commission
+int_commission        "1" -[#000000,plain]-> "0..*"  country_to_int_commission
 
-class IntCommissionPosition {
-   id:  Long
-   title:  String
-}
-class PersonToIntCommissionPosition {
-   person_id:  Long
-   int_commission_position_id:  Long
-}
-
-Person                "1" -[#000000,plain]-> "0..*"  PersonToIntCommissionPosition
-IntCommissionPosition "1" -[#000000,plain]-> "0..*"  PersonToIntCommissionPosition
-
-class IntGroup {
-   id:  Long
-   lead:  String
-   title:  String
-   url_website:  String
-}
-class CountryToIntGroup {
-   country_id:  String
-   int_group_id:  Long
-}
-
-Country               "1" -[#000000,plain]-> "0..*"  CountryToIntGroup
-IntGroup              "1" -[#000000,plain]-> "0..*"  CountryToIntGroup
-
-class IntGroupPosition {
-   id:  Long
-   int_group_id:  Long
+class int_commission_position {
+   (PK) id:  Long
    title:  String
 }
-
-IntGroup              "1" -[#000000,plain]-> "0..*"  IntGroupPosition
-
-class PersonToIntGroupPosition {
-   person_id:  Long
-   int_group_position_id:  Long
+class person_to_int_commission_position {
+   (PK, FK) person_id:  Long
+   (PK, FK) int_commission_position_id:  Long
 }
 
-Person                "1" -[#000000,plain]-> "0..*"  PersonToIntGroupPosition
-IntGroupPosition      "1" -[#000000,plain]-> "0..*"  PersonToIntGroupPosition
+person                  "1" -[#000000,plain]-> "0..*"  person_to_int_commission_position
+int_commission_position "1" -[#000000,plain]-> "0..*"  person_to_int_commission_position
 
-class StaffOrg {
-   org:  long
-   orgTitle:  String
+class int_group {
+   (PK) id:  Long
+   title:  String
+   lead:  String?
+   url_website:  String?
 }
 
-class PersonToStaffOrg {
-   person_id:  Long
-   staff_org_id:  Long
+class country_to_int_group {
+   (PK, FK) country_id:  String
+   (PK, FK) int_group_id:  Long
 }
 
-Person                "1" -[#000000,plain]-> "0..*"  PersonToStaffOrg
-StaffOrg              "1" -[#000000,plain]-> "0..*"  PersonToStaffOrg
+country               "1" -[#000000,plain]-> "0..*"  country_to_int_group
+int_group             "1" -[#000000,plain]-> "0..*"  country_to_int_group
+
+class int_group_position {
+   (PK) id:  Long
+   (FK) int_group_id:  Long
+   title:  String
+}
+
+int_group             "1" -[#000000,plain]-> "0..*"  int_group_position
+
+class person_to_int_group_position {
+   (PK, FK) person_id:  Long
+   (PK, FK) int_group_position_id:  Long
+}
+
+person                "1" -[#000000,plain]-> "0..*"  person_to_int_group_position
+int_group_position    "1" -[#000000,plain]-> "0..*"  person_to_int_group_position
+
+class staff_org {
+   (PK) id:  Long
+   title:  String
+}
+
+class person_to_staff_org {
+   (PK, FK) person_id:  Long
+   (PK, FK) staff_org_id:  Long
+}
+
+person                "1" -[#000000,plain]-> "0..*"  person_to_staff_org
+staff_org             "1" -[#000000,plain]-> "0..*"  person_to_staff_org
 
 @enduml

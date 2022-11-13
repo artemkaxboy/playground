@@ -1,6 +1,5 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.dto.CommissionDto
 import org.hibernate.Hibernate
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -10,22 +9,23 @@ import javax.persistence.Id
 data class Commission(
 
     @Id
-    val id: Long,
+    @Column(nullable = false)
+    val id: Long? = null,
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    val title: String = "",
+
+    @Column(columnDefinition = "TEXT", name = "short_title")
+    val shortTitle: String? = null,
 
     @Column(columnDefinition = "TEXT")
-    val title: String,
+    val description: String = "",
 
     @Column(columnDefinition = "TEXT")
-    val type: String,
+    val type: String? = null,
 
-    @Column(columnDefinition = "TEXT")
-    val description: String,
-
-    @Column(name = "url_website", columnDefinition = "TEXT")
-    val urlWebsite: String,
-
-    @Column(name = "short_title", columnDefinition = "TEXT")
-    val shortTitle: String?,
+    @Column(columnDefinition = "TEXT", name = "url_website")
+    val urlWebsite: String? = null,
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -33,7 +33,7 @@ data class Commission(
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as Commission
 
-        return id == other.id
+        return id != null && id == other.id
     }
 
     override fun hashCode(): Int = javaClass.hashCode()
@@ -43,12 +43,3 @@ data class Commission(
         return this::class.simpleName + "(id = $id , title = $title )"
     }
 }
-
-fun CommissionDto.toEntity(): Commission = Commission(
-    id = id,
-    title = title,
-    description = description,
-    type = type,
-    urlWebsite = urlWebsite,
-    shortTitle = shortTitle,
-)

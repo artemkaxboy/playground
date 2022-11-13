@@ -1,91 +1,88 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.dto.CommissionPositionDto
 import org.hibernate.Hibernate
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
-import javax.persistence.CascadeType
+import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
-import javax.persistence.JoinTable
-import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
+import javax.persistence.OneToOne
 
-@IdClass(CommissionPosition.CommissionPositionId::class)
 @Entity
+@IdClass(CommissionPosition.IdClass::class)
 data class CommissionPosition(
 
-    @Id
-    val org: Long,
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "person_id", insertable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,
 
     @Id
-    @Column(name = "person_id")
-    val personId: Long = person?.id ?: 0,
+    @Column(name = "person_id", nullable = false)
+    val personId: Long? = person?.id,
 
-    @Column(name = "regions_title", columnDefinition = "TEXT")
-    val regionsTitle: String = "",
+    @ManyToOne
+    @JoinColumn(name = "commission_id", insertable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    val commission: Commission? = null,
 
-    @Column(name = "org_title", columnDefinition = "TEXT")
-    val orgTitle: String = "",
+    @Id
+    @Column(name = "commission_id", nullable = false)
+    val commissionId: Long? = commission?.id,
 
-    @Column(name = "position_type", columnDefinition = "TEXT")
-    val positionType: String? = null,
-
-    @Column(name = "position_text", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", name = "position_text", nullable = false)
     val positionText: String = "",
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    @JoinTable(
-        name = "commission_position_to_region",
-        joinColumns = [JoinColumn(name = "org"),
-            JoinColumn(name = "person_id")],
-        inverseJoinColumns = [JoinColumn(name = "region_id")]
-    )
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    val regions: Set<Region> = emptySet(),
+    @Column(columnDefinition = "TEXT", name = "position_type")
+    val positionType: String? = null,
 ) {
+
+    data class IdClass(
+
+        @Id
+        @Column(name = "person_id")
+        val personId: Long? = null,
+
+        @Id
+        @Column(name = "commission_id")
+        val commissionId: Long? = null,
+    ) : Serializable {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
+            other as CommissionPosition
+
+            return personId == other.personId
+                    && commissionId == other.commissionId
+        }
+
+        override fun hashCode(): Int = Objects.hash(personId, commissionId)
+
+        @Override
+        override fun toString(): String {
+            return this::class.simpleName + "(personId = $personId , commissionId = $commissionId )"
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
         other as CommissionPosition
 
-        return org == other.org
+        return personId == other.personId
+                && commissionId == other.commissionId
     }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode(): Int = Objects.hash(personId, commissionId)
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(org = $org , orgTitle = $orgTitle , positionText = $positionText , personId = $personId )"
+        return this::class.simpleName + "(personId = $personId , commissionId = $commissionId , positionText = $positionText )"
     }
-
-    data class CommissionPositionId(
-
-        @Id
-        val org: Long = 0,
-
-        @Id
-        @Column(name = "person_id")
-        val personId: Long = 0,
-    ) : Serializable
 }
-
-fun CommissionPositionDto.toEntity(person: Person) = CommissionPosition(
-    regionsTitle = regionsTitle,
-    orgTitle = orgTitle,
-    positionType = positionType,
-    positionText = positionText,
-    org = org,
-    personId = person.id,
-    person = person,
-    regions = regions.map { Region(it) }.toSet(),
-)

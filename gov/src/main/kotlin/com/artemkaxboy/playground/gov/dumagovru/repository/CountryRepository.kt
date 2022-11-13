@@ -10,7 +10,7 @@ interface CountryRepositoryI : JpaRepository<Country, String>
 class CountryRepository(countryRepositoryI: CountryRepositoryI) : CountryRepositoryI by countryRepositoryI {
 
     fun saveAllTwoSteps(countries: List<Country>) {
-        saveAll(countries.map { it.copy(associatedTo = emptySet()) })
+//        saveAll(countries.map { it.copy(associatedTo = emptySet()) })
         saveAll(countries)
     }
 
