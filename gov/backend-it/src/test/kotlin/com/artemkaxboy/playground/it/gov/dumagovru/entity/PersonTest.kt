@@ -12,9 +12,10 @@ import com.artemkaxboy.playground.gov.dumagovru.repository.FractionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
 import com.artemkaxboy.playground.it.gov.dumagovru.it.AbstractIntegrationTest
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 internal class PersonTest : AbstractIntegrationTest() {
 
@@ -36,22 +37,17 @@ internal class PersonTest : AbstractIntegrationTest() {
     @Autowired
     private lateinit var convocationRepository: ConvocationRepository
 
-    @AfterEach
-    fun tearDown() {
-        personRepository.deleteAll()
-        commissionRepository.deleteAll()
-        commissionPositionRepository.deleteAll()
-        fractionPositionRepository.deleteAll()
-        fractionRepository.deleteAll()
-        convocationRepository.deleteAll()
-    }
+    @Autowired
+    private lateinit var entityManager: EntityManager
 
     @Test
-    fun deletePerson_deletesAssociatedCommissionPositionNotCommission() {
+    @Transactional
+    fun deletePerson_deletesAssociatedCommissionPosition() {
         val expected = makeCommissionPosition()
         saveUserWithAssociatedCommissionPosition(expected)
 
-        personRepository.deleteById(expected.personId!!)
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
+            .executeUpdate()
 
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -59,11 +55,13 @@ internal class PersonTest : AbstractIntegrationTest() {
     }
 
     @Test
+    @Transactional
     fun deletePerson_deletesAssociatedFractionPosition() {
         val expected = makeFractionPosition()
         saveFractionPositionWithAssociated(expected)
 
-        personRepository.deleteById(expected.personId!!)
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
+            .executeUpdate()
 
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

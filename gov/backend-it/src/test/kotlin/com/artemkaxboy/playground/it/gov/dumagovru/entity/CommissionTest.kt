@@ -7,9 +7,10 @@ import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
 import com.artemkaxboy.playground.it.gov.dumagovru.it.AbstractIntegrationTest
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 internal class CommissionTest : AbstractIntegrationTest() {
 
@@ -22,19 +23,17 @@ internal class CommissionTest : AbstractIntegrationTest() {
     @Autowired
     private lateinit var commissionRepository: CommissionRepository
 
-    @AfterEach
-    fun tearDown() {
-        personRepository.deleteAll()
-        commissionRepository.deleteAll()
-        commissionPositionRepository.deleteAll()
-    }
+    @Autowired
+    private lateinit var entityManager: EntityManager
 
     @Test
+    @Transactional
     fun deleteCommission_deletesAssociatedCommissionPositionNotPerson() {
         val expected = makeCommissionPosition()
         saveCommissionPositionWithAssociated(expected)
 
-        commissionRepository.deleteById(expected.commissionId!!)
+        entityManager.createNativeQuery("DELETE FROM commission WHERE id = ${expected.commissionId}")
+            .executeUpdate()
 
         commissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

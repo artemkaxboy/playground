@@ -8,9 +8,10 @@ import com.artemkaxboy.playground.gov.dumagovru.repository.FractionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
 import com.artemkaxboy.playground.it.gov.dumagovru.it.AbstractIntegrationTest
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 internal class ConvocationTest : AbstractIntegrationTest() {
 
@@ -26,20 +27,17 @@ internal class ConvocationTest : AbstractIntegrationTest() {
     @Autowired
     private lateinit var fractionPositionRepository: FractionPositionRepository
 
-    @AfterEach
-    fun tearDown() {
-        fractionRepository.deleteAll()
-        convocationRepository.deleteAll()
-        personRepository.deleteAll()
-        fractionPositionRepository.deleteAll()
-    }
+    @Autowired
+    private lateinit var entityManager: EntityManager
 
     @Test
+    @Transactional
     fun deleteConvocation_deletesAssociatedCommissionPositionNotPerson() {
         val expected = makeFractionPosition()
         saveFractionPositionWithAssociated(expected)
 
-        convocationRepository.deleteById(expected.convocationId!!)
+        entityManager.createNativeQuery("DELETE FROM convocation WHERE id = ${expected.convocationId}")
+            .executeUpdate()
 
         convocationRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

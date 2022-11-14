@@ -8,9 +8,10 @@ import com.artemkaxboy.playground.gov.dumagovru.repository.FractionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
 import com.artemkaxboy.playground.it.gov.dumagovru.it.AbstractIntegrationTest
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
 
 internal class FractionTest : AbstractIntegrationTest() {
 
@@ -26,20 +27,17 @@ internal class FractionTest : AbstractIntegrationTest() {
     @Autowired
     private lateinit var fractionPositionRepository: FractionPositionRepository
 
-    @AfterEach
-    fun tearDown() {
-        fractionRepository.deleteAll()
-        convocationRepository.deleteAll()
-        personRepository.deleteAll()
-        fractionPositionRepository.deleteAll()
-    }
+    @Autowired
+    private lateinit var entityManager: EntityManager
 
     @Test
+    @Transactional
     fun deleteFraction_deletesAssociatedCommissionPositionNotPerson() {
         val expected = makeFractionPosition()
         saveFractionPositionWithAssociated(expected)
 
-        fractionRepository.deleteById(expected.fractionId!!)
+        entityManager.createNativeQuery("DELETE FROM fraction WHERE id = ${expected.fractionId}")
+            .executeUpdate()
 
         fractionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

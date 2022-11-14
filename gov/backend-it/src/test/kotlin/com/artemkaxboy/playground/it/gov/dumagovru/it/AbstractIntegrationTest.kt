@@ -20,7 +20,11 @@ import org.testcontainers.containers.PostgreSQLContainer
 abstract class AbstractIntegrationTest {
 
     companion object {
-        val container = PostgreSQLContainer<Nothing>("postgres:12.0")
+        val container = PostgreSQLContainer<Nothing>("postgres:12.0").apply {
+            withDatabaseName("database")
+            withUsername("username")
+            withPassword("password")
+        }
     }
 
     internal class Initializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
