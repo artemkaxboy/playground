@@ -30,3 +30,11 @@ data class Region(
         return this::class.simpleName + "(id = $id , title = $title )"
     }
 }
+
+fun makeRegion(
+    id: String = "id",
+    title: String = "title",
+) = Region(
+    id = id,
+    title = title,
+)

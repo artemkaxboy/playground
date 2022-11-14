@@ -34,3 +34,13 @@ data class Country(
         return this::class.simpleName + "(id = $id , title = $title )"
     }
 }
+
+fun makeCountry(
+    id: String = "XX",
+    title: String = "country",
+    url: String = "https://country",
+) = Country(
+    id = id,
+    title = title,
+    url = url,
+)

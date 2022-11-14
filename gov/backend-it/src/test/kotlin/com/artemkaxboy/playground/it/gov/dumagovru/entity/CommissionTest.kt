@@ -28,7 +28,7 @@ internal class CommissionTest : AbstractIntegrationTest() {
 
     @Test
     @Transactional
-    fun deleteCommission_deletesAssociatedCommissionPositionNotPerson() {
+    fun deleteCommission_deletesAssociatedCommissionPosition() {
         val expected = makeCommissionPosition()
         saveCommissionPositionWithAssociated(expected)
 

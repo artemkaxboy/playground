@@ -35,3 +35,15 @@ data class IntGroup(
         return this::class.simpleName + "(id = $id , title = $title )"
     }
 }
+
+fun makeIntGroup(
+    id: Long = 1L,
+    title: String = "title",
+    lead: String? = "lead",
+    urlWebsite: String? = "https://urlWebsite",
+) = IntGroup(
+    id = id,
+    title = title,
+    lead = lead,
+    urlWebsite = urlWebsite,
+)

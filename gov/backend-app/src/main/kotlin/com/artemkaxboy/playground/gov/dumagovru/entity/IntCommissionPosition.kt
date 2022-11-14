@@ -29,3 +29,11 @@ data class IntCommissionPosition(
         return this::class.simpleName + "(id = $id , title = $title )"
     }
 }
+
+fun makeIntCommissionPosition(
+    id: Long = 1L,
+    title: String = "title",
+) = IntCommissionPosition(
+    id = id,
+    title = title,
+)

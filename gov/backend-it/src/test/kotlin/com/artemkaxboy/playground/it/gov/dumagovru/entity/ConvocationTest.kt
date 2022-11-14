@@ -32,7 +32,7 @@ internal class ConvocationTest : AbstractIntegrationTest() {
 
     @Test
     @Transactional
-    fun deleteConvocation_deletesAssociatedCommissionPositionNotPerson() {
+    fun deleteConvocation_deletesAssociatedFractionPosition() {
         val expected = makeFractionPosition()
         saveFractionPositionWithAssociated(expected)
 
