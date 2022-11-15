@@ -7,6 +7,7 @@ import java.io.Serializable
 import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
@@ -16,7 +17,7 @@ import javax.persistence.ManyToOne
 @IdClass(FractionPosition.IdClass::class)
 data class FractionPosition(
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "convocation_id", insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val convocation: Convocation? = null,
@@ -25,7 +26,7 @@ data class FractionPosition(
     @Column(name = "convocation_id", nullable = false)
     val convocationId: Long? = convocation?.id,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fraction_id", insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val fraction: Fraction? = null,
@@ -34,7 +35,7 @@ data class FractionPosition(
     @Column(name = "fraction_id", nullable = false)
     val fractionId: Long? = fraction?.id,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,
@@ -103,8 +104,8 @@ fun makeFractionPosition(
     person: Person = makePerson(),
     personId: Long = person.id!!,
     actual: Boolean = true,
-    placeInHallColumn: Int = 1,
-    placeInHallRow: Int = 1,
+    placeInHallColumn: Int? = 1,
+    placeInHallRow: Int? = 1,
 ) = FractionPosition(
     convocation = convocation,
     convocationId = convocationId,

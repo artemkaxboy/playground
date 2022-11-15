@@ -18,7 +18,7 @@ import javax.persistence.ManyToOne
 @IdClass(RegionToCommissionPosition.IdClass::class)
 data class RegionToCommissionPosition(
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val region: Region? = null,

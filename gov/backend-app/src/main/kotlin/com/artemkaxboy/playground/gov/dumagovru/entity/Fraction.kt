@@ -47,10 +47,10 @@ data class Fraction(
 fun makeFraction(
     id: Long = 1L,
     title: String = "title",
-    shortTitle: String = "shortTitle",
-    description: String = "description",
-    urlWebsite: String = "https://urlWebsite",
-    type: String = "type",
+    shortTitle: String? = "shortTitle",
+    description: String? = "description",
+    urlWebsite: String? = "https://urlWebsite",
+    type: String? = "type",
 ) = Fraction(
     id = id,
     title = title,

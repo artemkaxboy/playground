@@ -38,7 +38,7 @@ data class Country(
 fun makeCountry(
     id: String = "XX",
     title: String = "country",
-    url: String = "https://country",
+    url: String? = "https://country",
 ) = Country(
     id = id,
     title = title,

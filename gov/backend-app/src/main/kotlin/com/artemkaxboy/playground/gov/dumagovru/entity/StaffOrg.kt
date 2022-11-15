@@ -9,9 +9,10 @@ import javax.persistence.Id
 data class StaffOrg(
 
     @Id
+    @Column(nullable = false)
     val id: Long? = null,
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     val title: String? = null,
 ) {
 
@@ -30,3 +31,11 @@ data class StaffOrg(
         return this::class.simpleName + "(id = $id , title = $title )"
     }
 }
+
+fun makeStaffOrg(
+    id: Long = 1L,
+    title: String = "title",
+) = StaffOrg(
+    id = id,
+    title = title,
+)

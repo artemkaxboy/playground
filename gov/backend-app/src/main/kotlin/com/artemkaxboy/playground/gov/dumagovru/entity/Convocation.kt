@@ -38,7 +38,7 @@ data class Convocation(
 fun makeConvocation(
     id: Long = 1L,
     numGenitive: String = "numGenitive",
-    deputiesUrl: String = "https://deputiesUrl",
+    deputiesUrl: String? = "https://deputiesUrl",
 ) = Convocation(
     id = id,
     numGenitive = numGenitive,

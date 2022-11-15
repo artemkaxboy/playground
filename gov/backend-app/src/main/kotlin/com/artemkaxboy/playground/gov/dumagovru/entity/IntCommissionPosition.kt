@@ -9,10 +9,11 @@ import javax.persistence.Id
 data class IntCommissionPosition(
 
     @Id
+    @Column(nullable = false)
     val id: Long? = null,
 
-    @Column(columnDefinition = "TEXT")
-    val title: String? = null,
+    @Column(columnDefinition = "TEXT", nullable = false)
+    val title: String = "",
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

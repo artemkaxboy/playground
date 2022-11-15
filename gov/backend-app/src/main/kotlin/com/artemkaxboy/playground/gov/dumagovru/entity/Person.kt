@@ -56,13 +56,13 @@ data class Person(
 fun makePerson(
     id: Long = 1L,
     firstName: String = "firstName",
-    secondName: String = "secondName",
+    secondName: String? = "secondName",
     lastName: String = "lastName",
     title: String = "title",
-    lead: String = "lead",
-    originalAisPersonId: Long = 1L,
-    photo: String = "https://photo$id",
-    url: String = "https://url$id",
+    lead: String? = "lead",
+    originalAisPersonId: Long? = 1L,
+    photo: String? = "https://photo$id",
+    url: String? = "https://url$id",
 ): Person = Person(
     id = id,
     firstName = firstName,

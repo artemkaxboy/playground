@@ -9,6 +9,7 @@ import javax.persistence.Id
 data class IntGroup(
 
     @Id
+    @Column(nullable = false)
     val id: Long? = null,
 
     @Column(columnDefinition = "TEXT", nullable = false)

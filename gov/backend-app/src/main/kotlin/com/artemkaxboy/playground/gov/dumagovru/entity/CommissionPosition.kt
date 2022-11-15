@@ -7,6 +7,7 @@ import java.io.Serializable
 import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
@@ -17,7 +18,7 @@ import javax.persistence.OneToOne
 @IdClass(CommissionPosition.IdClass::class)
 data class CommissionPosition(
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,
@@ -26,7 +27,7 @@ data class CommissionPosition(
     @Column(name = "person_id", nullable = false)
     val personId: Long? = person?.id,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commission_id", insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val commission: Commission? = null,
@@ -93,12 +94,12 @@ fun makeCommissionPosition(
     commission: Commission = makeCommission(),
     commissionId: Long = commission.id ?: 1L,
     positionText: String = "positionText",
-    positionType: String = "positionType",
+    positionType: String? = "positionType",
 ) = CommissionPosition(
     person = person,
-    personId = person.id,
+    personId = personId,
     commission = commission,
-    commissionId = commission.id,
+    commissionId = commissionId,
     positionText = positionText,
     positionType = positionType,
 )

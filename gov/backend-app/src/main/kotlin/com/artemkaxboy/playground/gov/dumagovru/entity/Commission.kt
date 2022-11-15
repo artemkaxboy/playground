@@ -47,10 +47,10 @@ data class Commission(
 fun makeCommission(
     id: Long = 1L,
     title: String = "title",
-    shortTitle: String = "shortTitle",
-    description: String = "description",
-    type: String = "type",
-    urlWebsite: String = "https://urlWebsite",
+    shortTitle: String? = "shortTitle",
+    description: String? = "description",
+    type: String? = "type",
+    urlWebsite: String? = "https://urlWebsite",
 ) = Commission(
     id = id,
     title = title,
