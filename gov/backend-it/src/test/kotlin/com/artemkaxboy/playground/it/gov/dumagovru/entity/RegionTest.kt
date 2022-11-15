@@ -1,6 +1,5 @@
 package com.artemkaxboy.playground.it.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.entity.RegionToCommissionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeRegionToCommissionPosition
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.RegionRepository
@@ -30,19 +29,13 @@ internal class RegionTest : AbstractIntegrationTest() {
     @Transactional
     fun deleteRegion_deletesAssociatedRegionToCommissionPosition() {
         val expected = makeRegionToCommissionPosition()
-        saveRegionToCommissionPositionWithAssociated(expected)
+        regionToCommissionPositionRepository.save(expected)
 
         entityManager.createNativeQuery("DELETE FROM region WHERE id = ${expected.regionId}")
             .executeUpdate()
 
         regionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         regionToCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-    }
-
-    private fun saveRegionToCommissionPositionWithAssociated(regionToCommissionPosition: RegionToCommissionPosition) {
-        regionToCommissionPosition.commissionPosition!!.let { commissionPositionRepository.save(it) }
-        regionToCommissionPosition.region!!.let { regionRepository.save(it) }
-        regionToCommissionPosition.let { regionToCommissionPositionRepository.save(it) }
+        commissionPositionRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
     }
 }

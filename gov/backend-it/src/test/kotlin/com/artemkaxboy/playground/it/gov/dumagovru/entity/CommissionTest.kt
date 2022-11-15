@@ -1,6 +1,5 @@
 package com.artemkaxboy.playground.it.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.entity.CommissionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeCommissionPosition
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
@@ -30,7 +29,7 @@ internal class CommissionTest : AbstractIntegrationTest() {
     @Transactional
     fun deleteCommission_deletesAssociatedCommissionPosition() {
         val expected = makeCommissionPosition()
-        saveCommissionPositionWithAssociated(expected)
+        commissionPositionRepository.save(expected)
 
         entityManager.createNativeQuery("DELETE FROM commission WHERE id = ${expected.commissionId}")
             .executeUpdate()
@@ -38,11 +37,5 @@ internal class CommissionTest : AbstractIntegrationTest() {
         commissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
-    }
-
-    private fun saveCommissionPositionWithAssociated(commissionPosition: CommissionPosition) {
-        personRepository.save(commissionPosition.person!!)
-        commissionRepository.save(commissionPosition.commission!!)
-        commissionPositionRepository.save(commissionPosition)
     }
 }

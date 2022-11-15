@@ -1,6 +1,5 @@
 package com.artemkaxboy.playground.it.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.entity.FractionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeFractionPosition
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.FractionPositionRepository
@@ -34,7 +33,7 @@ internal class FractionTest : AbstractIntegrationTest() {
     @Transactional
     fun deleteFraction_deletesAssociatedFractionPosition() {
         val expected = makeFractionPosition()
-        saveFractionPositionWithAssociated(expected)
+        fractionPositionRepository.save(expected)
 
         entityManager.createNativeQuery("DELETE FROM fraction WHERE id = ${expected.fractionId}")
             .executeUpdate()
@@ -43,12 +42,5 @@ internal class FractionTest : AbstractIntegrationTest() {
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
         convocationRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
-    }
-
-    private fun saveFractionPositionWithAssociated(fractionPosition: FractionPosition) {
-        fractionRepository.save(fractionPosition.fraction!!)
-        convocationRepository.save(fractionPosition.convocation!!)
-        personRepository.save(fractionPosition.person!!)
-        fractionPositionRepository.save(fractionPosition)
     }
 }

@@ -1,7 +1,5 @@
 package com.artemkaxboy.playground.it.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.entity.CommissionPosition
-import com.artemkaxboy.playground.gov.dumagovru.entity.FractionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeCommissionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeFractionPosition
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
@@ -44,7 +42,7 @@ internal class PersonTest : AbstractIntegrationTest() {
     @Transactional
     fun deletePerson_deletesAssociatedCommissionPosition() {
         val expected = makeCommissionPosition()
-        saveUserWithAssociatedCommissionPosition(expected)
+        commissionPositionRepository.save(expected)
 
         entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
             .executeUpdate()
@@ -58,7 +56,7 @@ internal class PersonTest : AbstractIntegrationTest() {
     @Transactional
     fun deletePerson_deletesAssociatedFractionPosition() {
         val expected = makeFractionPosition()
-        saveFractionPositionWithAssociated(expected)
+        fractionPositionRepository.save(expected)
 
         entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
             .executeUpdate()
@@ -68,18 +66,4 @@ internal class PersonTest : AbstractIntegrationTest() {
         fractionRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
         convocationRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
     }
-
-    private fun saveUserWithAssociatedCommissionPosition(commissionPosition: CommissionPosition) {
-        personRepository.save(commissionPosition.person!!)
-        commissionRepository.save(commissionPosition.commission!!)
-        commissionPositionRepository.save(commissionPosition)
-    }
-
-    private fun saveFractionPositionWithAssociated(fractionPosition: FractionPosition) {
-        fractionRepository.save(fractionPosition.fraction!!)
-        convocationRepository.save(fractionPosition.convocation!!)
-        personRepository.save(fractionPosition.person!!)
-        fractionPositionRepository.save(fractionPosition)
-    }
-
 }
