@@ -94,3 +94,17 @@ data class RegionToCommissionPosition(
         }
     }
 }
+
+fun makeRegionToCommissionPosition(
+    region: Region = makeRegion(),
+    regionId: String = region.id!!,
+    commissionPosition: CommissionPosition = makeCommissionPosition(),
+    personId: Long = commissionPosition.person!!.id!!,
+    commissionId: Long = commissionPosition.commission!!.id!!,
+) = RegionToCommissionPosition(
+    region = region,
+    regionId = regionId,
+    commissionPosition = commissionPosition,
+    personId = personId,
+    commissionId = commissionId,
+)
