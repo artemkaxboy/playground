@@ -4,7 +4,7 @@ import com.artemkaxboy.playground.gov.dumagovru.entity.CountryToCountry
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
-interface CountryToCountryRepositoryI : JpaRepository<CountryToCountry, CountryToCountry>
+interface CountryToCountryRepositoryI : JpaRepository<CountryToCountry, CountryToCountry.IdClass>
 
 @Repository
 class CountryToCountryRepository(

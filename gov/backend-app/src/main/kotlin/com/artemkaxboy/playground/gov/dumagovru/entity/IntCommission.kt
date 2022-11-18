@@ -6,7 +6,7 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Entity
-data class IntCommissionPosition(
+data class IntCommission(
 
     @Id
     @Column(nullable = false)
@@ -14,12 +14,18 @@ data class IntCommissionPosition(
 
     @Column(columnDefinition = "TEXT", nullable = false)
     val title: String = "",
+
+    @Column(columnDefinition = "TEXT")
+    val lead: String? = null,
+
+    @Column(name = "url_website", columnDefinition = "TEXT")
+    val urlWebsite: String? = null,
 ) {
     
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as IntCommissionPosition
+        other as IntCommission
 
         return id != null && id == other.id
     }
@@ -32,10 +38,14 @@ data class IntCommissionPosition(
     }
 }
 
-fun makeIntCommissionPosition(
+fun makeIntCommission(
     id: Long = 1L,
     title: String = "title",
-) = IntCommissionPosition(
+    lead: String? = "lead",
+    urlWebsite: String? = "urlWebsite",
+) = IntCommission(
     id = id,
     title = title,
+    lead = lead,
+    urlWebsite = urlWebsite,
 )

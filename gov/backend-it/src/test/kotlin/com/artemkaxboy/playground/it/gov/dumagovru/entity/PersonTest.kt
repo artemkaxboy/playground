@@ -2,12 +2,15 @@ package com.artemkaxboy.playground.it.gov.dumagovru.entity
 
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeCommissionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeFractionPosition
+import com.artemkaxboy.playground.gov.dumagovru.entity.makePersonToIntCommissionPosition
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.FractionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.FractionRepository
+import com.artemkaxboy.playground.gov.dumagovru.repository.IntCommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
+import com.artemkaxboy.playground.gov.dumagovru.repository.PersonToIntCommissionPositionRepository
 import com.artemkaxboy.playground.it.gov.dumagovru.it.AbstractIntegrationTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -34,6 +37,12 @@ internal class PersonTest : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var convocationRepository: ConvocationRepository
+
+    @Autowired
+    private lateinit var personToIntCommissionPositionRepository: PersonToIntCommissionPositionRepository
+
+    @Autowired
+    private lateinit var intCommissionPositionRepository: IntCommissionPositionRepository
 
     @Autowired
     private lateinit var entityManager: EntityManager
@@ -65,5 +74,19 @@ internal class PersonTest : AbstractIntegrationTest() {
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
         convocationRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
+    }
+
+    @Test
+    @Transactional
+    fun deletePerson_deletesAssociatedPersonToIntCommissionPosition() {
+        val expected = makePersonToIntCommissionPosition()
+        personToIntCommissionPositionRepository.save(expected)
+
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
+            .executeUpdate()
+
+        personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
+        personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
+        intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
     }
 }
