@@ -54,7 +54,7 @@ data class RegionToCommissionPosition(
                 && commissionId == other.commissionId
     }
 
-    override fun hashCode(): Int = Objects.hash(regionId, personId, commissionId);
+    override fun hashCode(): Int = Objects.hash(regionId, personId, commissionId)
 
     @Override
     override fun toString(): String {
@@ -86,7 +86,7 @@ data class RegionToCommissionPosition(
                     && commissionId == other.commissionId
         }
 
-        override fun hashCode(): Int = Objects.hash(regionId, personId, commissionId);
+        override fun hashCode(): Int = Objects.hash(regionId, personId, commissionId)
 
         @Override
         override fun toString(): String {

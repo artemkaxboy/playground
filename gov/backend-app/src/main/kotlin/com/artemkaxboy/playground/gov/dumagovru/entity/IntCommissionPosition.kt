@@ -1,6 +1,8 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import org.hibernate.Hibernate
+import com.artemkaxboy.playground.gov.utils.entityEquals
+import com.artemkaxboy.playground.gov.utils.entityHashCode
+import com.artemkaxboy.playground.gov.utils.entityToString
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -15,21 +17,12 @@ data class IntCommissionPosition(
     @Column(columnDefinition = "TEXT", nullable = false)
     val title: String = "",
 ) {
-    
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as IntCommissionPosition
 
-        return id != null && id == other.id
-    }
+    override fun equals(other: Any?) = entityEquals { this to other }
 
-    override fun hashCode(): Int = javaClass.hashCode()
+    override fun hashCode() = entityHashCode { this }
 
-    @Override
-    override fun toString(): String {
-        return this::class.simpleName + "(id = $id , title = $title )"
-    }
+    override fun toString() = entityToString { this }
 }
 
 fun makeIntCommissionPosition(
@@ -39,3 +32,17 @@ fun makeIntCommissionPosition(
     id = id,
     title = title,
 )
+
+fun main() {
+    val e1 = makeIntCommissionPosition()
+    val e2 = makeIntCommissionPosition()
+    println("$e1 == $e2: ${e1 == e2}")
+
+    val e3 = makeIntCommissionPosition()
+    val e4 = makeIntCommissionPosition(id = 23L)
+    println("$e3 == $e4: ${e3 == e4}")
+
+    val e5 = makeIntCommissionPosition()
+    val e6 = makeIntCommissionPosition(title = "title2")
+    println("$e5 == $e6: ${e5 == e6}")
+}

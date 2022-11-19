@@ -14,8 +14,8 @@ import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 
 @Entity
-@IdClass(CountryToIntCommission.IdClass::class)
-data class CountryToIntCommission(
+@IdClass(CountryToIntGroup.IdClass::class)
+data class CountryToIntGroup(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", insertable = false, updatable = false)
@@ -27,45 +27,45 @@ data class CountryToIntCommission(
     val countryId: String? = country?.id,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "int_commission_id", insertable = false, updatable = false)
+    @JoinColumn(name = "int_group_id", insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    val intCommission: IntCommission? = null,
+    val intGroup: IntGroup? = null,
 
     @Id
-    @Column(name = "int_commission_id", nullable = false)
-    val intCommissionId: Long? = intCommission?.id,
+    @Column(name = "int_group_id", nullable = false)
+    val intGroupId: Long? = intGroup?.id,
 ) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as CountryToIntCommission
+        other as CountryToIntGroup
 
         return countryId == other.countryId
-                && intCommissionId == other.intCommissionId
+                && intGroupId == other.intGroupId
     }
 
-    override fun hashCode(): Int = Objects.hash(countryId, intCommissionId)
+    override fun hashCode(): Int = Objects.hash(countryId, intGroupId)
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(countryId = $countryId , intCommissionId = $intCommissionId )"
+        return this::class.simpleName + "(countryId = $countryId , intGroupId = $intGroupId )"
     }
 
     data class IdClass(
         val countryId: String? = null,
-        val intCommissionId: Long? = null,
+        val intGroupId: Long? = null,
     ) : Serializable
 }
 
-fun makeCountryToIntCommission(
+fun makeCountryToIntGroup(
     country: Country? = makeCountry(),
     countryId: String? = country?.id,
-    intCommission: IntCommission? = makeIntCommission(),
-    intCommissionId: Long? = intCommission?.id,
-) = CountryToIntCommission(
+    intGroup: IntGroup? = makeIntGroup(),
+    intGroupId: Long? = intGroup?.id,
+) = CountryToIntGroup(
     country = country,
     countryId = countryId,
-    intCommission = intCommission,
-    intCommissionId = intCommissionId,
+    intGroup = intGroup,
+    intGroupId = intGroupId,
 )

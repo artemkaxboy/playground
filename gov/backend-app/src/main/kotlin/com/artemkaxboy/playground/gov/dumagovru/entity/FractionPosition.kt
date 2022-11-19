@@ -64,7 +64,7 @@ data class FractionPosition(
                 && personId == other.personId
     }
 
-    override fun hashCode(): Int = Objects.hash(convocationId, fractionId, personId);
+    override fun hashCode(): Int = Objects.hash(convocationId, fractionId, personId)
 
     @Override
     override fun toString(): String {
@@ -75,25 +75,7 @@ data class FractionPosition(
         val convocationId: Long? = null,
         val fractionId: Long? = null,
         val personId: Long? = null,
-    ) : Serializable {
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-            other as FractionPosition
-
-            return convocationId == other.convocationId
-                    && fractionId == other.fractionId
-                    && personId == other.personId
-        }
-
-        override fun hashCode(): Int = Objects.hash(convocationId, fractionId, personId);
-
-        @Override
-        override fun toString(): String {
-            return this::class.simpleName + "(convocationId = $convocationId , fractionId = $fractionId , personId = $personId )"
-        }
-    }
+    ) : Serializable
 }
 
 fun makeFractionPosition(
