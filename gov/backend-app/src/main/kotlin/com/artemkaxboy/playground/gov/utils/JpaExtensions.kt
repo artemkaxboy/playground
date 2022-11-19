@@ -6,7 +6,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
-fun KClass<out Any>.filterFields(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
+inline fun KClass<out Any>.filterFields(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
     return this.declaredMemberProperties
         .filter { field ->
             field.javaField
