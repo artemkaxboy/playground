@@ -1,6 +1,8 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import org.hibernate.Hibernate
+import com.artemkaxboy.playground.gov.utils.entityEquals
+import com.artemkaxboy.playground.gov.utils.entityHashCode
+import com.artemkaxboy.playground.gov.utils.entityToString
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -21,21 +23,10 @@ data class IntCommission(
     @Column(name = "url_website", columnDefinition = "TEXT")
     val urlWebsite: String? = null,
 ) {
-    
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as IntCommission
 
-        return id != null && id == other.id
-    }
-
-    override fun hashCode(): Int = javaClass.hashCode()
-
-    @Override
-    override fun toString(): String {
-        return this::class.simpleName + "(id = $id , title = $title )"
-    }
+    override fun equals(other: Any?) = entityEquals { this to other }
+    override fun hashCode() = entityHashCode { this }
+    override fun toString() = entityToString { this }
 }
 
 fun makeIntCommission(

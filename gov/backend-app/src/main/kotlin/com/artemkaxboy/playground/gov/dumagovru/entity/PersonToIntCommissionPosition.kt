@@ -1,10 +1,11 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import org.hibernate.Hibernate
+import com.artemkaxboy.playground.gov.utils.entityEquals
+import com.artemkaxboy.playground.gov.utils.entityHashCode
+import com.artemkaxboy.playground.gov.utils.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
-import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -36,43 +37,14 @@ data class PersonToIntCommissionPosition(
     val intCommissionPositionId: Long? = intCommissionPosition?.id,
 ) {
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as PersonToIntCommissionPosition
-
-        return personId == other.personId
-                && intCommissionPositionId == other.intCommissionPositionId
-    }
-
-    override fun hashCode(): Int = Objects.hash(personId, intCommissionPositionId)
-
-    @Override
-    override fun toString(): String {
-        return this::class.simpleName + "(personId = $personId , intCommissionPositionId = $intCommissionPositionId )"
-    }
+    override fun equals(other: Any?) = entityEquals { this to other }
+    override fun hashCode() = entityHashCode { this }
+    override fun toString() = entityToString { this }
 
     data class IdClass(
         val personId: Long? = null,
         val intCommissionPositionId: Long? = null,
-    ) : Serializable {
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-            other as IdClass
-
-            return personId == other.personId
-                    && intCommissionPositionId == other.intCommissionPositionId
-        }
-
-        override fun hashCode(): Int = Objects.hash(personId, intCommissionPositionId)
-
-        @Override
-        override fun toString(): String {
-            return this::class.simpleName + "(personId = $personId , intCommissionPositionId = $intCommissionPositionId )"
-        }
-    }
+    ) : Serializable
 }
 
 fun makePersonToIntCommissionPosition(

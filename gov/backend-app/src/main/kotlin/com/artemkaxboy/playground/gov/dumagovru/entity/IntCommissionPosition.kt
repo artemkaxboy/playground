@@ -19,9 +19,7 @@ data class IntCommissionPosition(
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }
-
     override fun hashCode() = entityHashCode { this }
-
     override fun toString() = entityToString { this }
 }
 
@@ -32,17 +30,3 @@ fun makeIntCommissionPosition(
     id = id,
     title = title,
 )
-
-fun main() {
-    val e1 = makeIntCommissionPosition()
-    val e2 = makeIntCommissionPosition()
-    println("$e1 == $e2: ${e1 == e2}")
-
-    val e3 = makeIntCommissionPosition()
-    val e4 = makeIntCommissionPosition(id = 23L)
-    println("$e3 == $e4: ${e3 == e4}")
-
-    val e5 = makeIntCommissionPosition()
-    val e6 = makeIntCommissionPosition(title = "title2")
-    println("$e5 == $e6: ${e5 == e6}")
-}

@@ -1,10 +1,11 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import org.hibernate.Hibernate
+import com.artemkaxboy.playground.gov.utils.entityEquals
+import com.artemkaxboy.playground.gov.utils.entityHashCode
+import com.artemkaxboy.playground.gov.utils.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
-import java.util.Objects
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -54,22 +55,9 @@ data class FractionPosition(
     val placeInHallRow: Int? = null,
 ) {
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as FractionPosition
-
-        return convocationId == other.convocationId
-                && fractionId == other.fractionId
-                && personId == other.personId
-    }
-
-    override fun hashCode(): Int = Objects.hash(convocationId, fractionId, personId)
-
-    @Override
-    override fun toString(): String {
-        return this::class.simpleName + "(convocationId = $convocationId , fractionId = $fractionId , personId = $personId , actual = $actual )"
-    }
+    override fun equals(other: Any?) = entityEquals { this to other }
+    override fun hashCode() = entityHashCode { this }
+    override fun toString() = entityToString { this }
 
     data class IdClass(
         val convocationId: Long? = null,

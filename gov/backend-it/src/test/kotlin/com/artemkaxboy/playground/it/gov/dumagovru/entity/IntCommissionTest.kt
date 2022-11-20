@@ -1,10 +1,9 @@
 package com.artemkaxboy.playground.it.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.dumagovru.entity.makePersonToIntCommissionPosition
-import com.artemkaxboy.playground.gov.dumagovru.repository.IntCommissionPositionRepository
+import com.artemkaxboy.playground.gov.dumagovru.entity.makeCountryToIntCommission
+import com.artemkaxboy.playground.gov.dumagovru.repository.CountryRepository
+import com.artemkaxboy.playground.gov.dumagovru.repository.CountryToIntCommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.IntCommissionRepository
-import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
-import com.artemkaxboy.playground.gov.dumagovru.repository.PersonToIntCommissionPositionRepository
 import com.artemkaxboy.playground.it.gov.dumagovru.it.AbstractIntegrationTest
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -18,28 +17,28 @@ internal class IntCommissionTest : AbstractIntegrationTest() {
     private lateinit var intCommissionRepository: IntCommissionRepository
 
     @Autowired
-    private lateinit var personToIntCommissionPositionRepository: PersonToIntCommissionPositionRepository
+    private lateinit var countryToIntCommissionRepository: CountryToIntCommissionRepository
 
     @Autowired
-    private lateinit var personRepository: PersonRepository
+    private lateinit var countryRepository: CountryRepository
 
     @Autowired
     private lateinit var entityManager: EntityManager
 
     @Test
     @Transactional
-    fun deletePerson_deletesAssociatedPersonToIntCommissionPosition() {
-        val expected = makePersonToIntCommissionPosition()
-        personToIntCommissionPositionRepository.save(expected)
+    fun deleteIntCommission_deletesAssociatedCountryToIntCommission() {
+        val expected = makeCountryToIntCommission()
+        countryToIntCommissionRepository.save(expected)
+        countryToIntCommissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         intCommissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
-        personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
-        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        countryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager
-            .createNativeQuery("DELETE FROM int_commission WHERE id = ${expected.intCo}")
+            .createNativeQuery("DELETE FROM int_commission WHERE id = ${expected.intCommissionId}")
             .executeUpdate()
+        countryToIntCommissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         intCommissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        countryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 }
