@@ -32,7 +32,9 @@ class commission_position {
 }
 
 'main .(delete cascade). secondary
+'deletePerson_deletesAssociatedCommissionPosition
 person                "1" -[#000000,plain]-> "0..*"  commission_position
+'deleteCommission_deletesAssociatedCommissionPosition
 commission            "1" -[#000000,plain]-> "0..*"  commission_position
 
 class region {
@@ -46,7 +48,9 @@ class region_to_commission_position {
    (PK, FK) commission_id:  Long
 }
 
+'deleteRegion_deletesAssociatedRegionToCommissionPosition
 region               "1" -[#000000,plain]-> "0..*"  region_to_commission_position
+'deleteCommissionPosition_deletesAssociatedRegionToCommissionPosition
 commission_position  "1" -[#000000,plain]-> "0..*"  region_to_commission_position
 
 class convocation {
@@ -73,8 +77,11 @@ class fraction_position {
    place_in_hall_row:  Integer?
 }
 
+'deleteConvocation_deletesAssociatedFractionPosition
 convocation           "1" -[#000000,plain]-> "0..*"  fraction_position
+'deleteFraction_deletesAssociatedFractionPosition
 fraction              "1" -[#000000,plain]-> "0..*"  fraction_position
+'deletePerson_deletesAssociatedFractionPosition
 person                "1" -[#000000,plain]-> "0..*"  fraction_position
 
 class region_to_fraction_position {

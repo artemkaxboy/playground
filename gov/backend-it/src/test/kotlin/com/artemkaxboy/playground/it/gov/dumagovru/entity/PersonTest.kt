@@ -51,42 +51,52 @@ internal class PersonTest : AbstractIntegrationTest() {
     @Transactional
     fun deletePerson_deletesAssociatedCommissionPosition() {
         val expected = makeCommissionPosition()
+
         commissionPositionRepository.save(expected)
+        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        commissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        commissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
             .executeUpdate()
-
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        commissionRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
+        commissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 
     @Test
     @Transactional
     fun deletePerson_deletesAssociatedFractionPosition() {
         val expected = makeFractionPosition()
+
         fractionPositionRepository.save(expected)
+        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        fractionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
             .executeUpdate()
-
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        fractionRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
-        convocationRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
+        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 
     @Test
     @Transactional
     fun deletePerson_deletesAssociatedPersonToIntCommissionPosition() {
         val expected = makePersonToIntCommissionPosition()
+
         personToIntCommissionPositionRepository.save(expected)
+        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
             .executeUpdate()
-
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
+        intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 }

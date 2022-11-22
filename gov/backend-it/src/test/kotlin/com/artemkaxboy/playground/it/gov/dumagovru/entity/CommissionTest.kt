@@ -29,13 +29,16 @@ internal class CommissionTest : AbstractIntegrationTest() {
     @Transactional
     fun deleteCommission_deletesAssociatedCommissionPosition() {
         val expected = makeCommissionPosition()
+
         commissionPositionRepository.save(expected)
+        commissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        commissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM commission WHERE id = ${expected.commissionId}")
             .executeUpdate()
-
         commissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        personRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
+        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 }

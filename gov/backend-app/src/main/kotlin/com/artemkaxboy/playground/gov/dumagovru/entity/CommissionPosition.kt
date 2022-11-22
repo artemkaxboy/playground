@@ -59,8 +59,8 @@ fun makeCommissionPosition(
     personId: Long = person.id ?: 1L,
     commission: Commission = makeCommission(),
     commissionId: Long = commission.id ?: 1L,
-    positionText: String = "positionText",
-    positionType: String? = "positionType",
+    positionText: String = CommissionPosition::positionText.name,
+    positionType: String? = CommissionPosition::positionType.name,
 ) = CommissionPosition(
     person = person,
     personId = personId,

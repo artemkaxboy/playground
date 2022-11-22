@@ -33,14 +33,18 @@ internal class FractionTest : AbstractIntegrationTest() {
     @Transactional
     fun deleteFraction_deletesAssociatedFractionPosition() {
         val expected = makeFractionPosition()
+
         fractionPositionRepository.save(expected)
+        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        fractionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM fraction WHERE id = ${expected.fractionId}")
             .executeUpdate()
-
         fractionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        personRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
-        convocationRepository.findAll().let { Assertions.assertThat(it).isNotEmpty }
+        personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 }
