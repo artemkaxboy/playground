@@ -164,6 +164,7 @@ class int_group_position {
    title:  String
 }
 
+'deleteIntGroup_deletesAssociatedIntGroupPosition
 int_group             "1" -[#000000,plain]-> "0..*"  int_group_position
 
 class person_to_int_group_position {
@@ -171,7 +172,9 @@ class person_to_int_group_position {
    (PK, FK) int_group_position_id:  Long
 }
 
+'deletePerson_deletesAssociatedPersonToIntGroupPosition
 person                "1" -[#000000,plain]-> "0..*"  person_to_int_group_position
+'deleteIntGroupPosition_deletesAssociatedPersonToIntGroupPosition
 int_group_position    "1" -[#000000,plain]-> "0..*"  person_to_int_group_position
 
 class staff_org {
@@ -184,7 +187,9 @@ class person_to_staff_org {
    (PK, FK) staff_org_id:  Long
 }
 
+'deletePerson_deletesAssociatedPersonToStaffOrg
 person                "1" -[#000000,plain]-> "0..*"  person_to_staff_org
+'deleteStaffOrg_deletesAssociatedPersonToStaffOrg
 staff_org             "1" -[#000000,plain]-> "0..*"  person_to_staff_org
 
 @enduml

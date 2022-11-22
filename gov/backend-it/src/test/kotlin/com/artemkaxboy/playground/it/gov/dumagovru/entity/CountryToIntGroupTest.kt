@@ -37,9 +37,9 @@ internal class CountryToIntGroupTest : AbstractIntegrationTest() {
 
         entityManager.createNativeQuery("DELETE FROM int_group WHERE id = '${expected.intGroupId}'")
             .executeUpdate()
-        countryRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
+        countryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         countryToIntGroupRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        intGroupRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        intGroupRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
     }
 
     @Test
