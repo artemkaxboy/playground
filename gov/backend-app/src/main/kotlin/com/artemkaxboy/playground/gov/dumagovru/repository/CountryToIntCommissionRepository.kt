@@ -12,8 +12,7 @@ class CountryToIntCommissionRepository(
     private val countryToIntCommissionRepositoryI: CountryToIntCommissionRepositoryI,
     private val countryRepository: CountryRepository,
     private val intCommissionRepository: IntCommissionRepository,
-) :
-    CountryToIntCommissionRepositoryI by countryToIntCommissionRepositoryI {
+) : CountryToIntCommissionRepositoryI by countryToIntCommissionRepositoryI {
 
     override fun <S : CountryToIntCommission> save(countryToIntCommission: S): S {
         countryToIntCommission.country?.let { countryRepository.save(it) }

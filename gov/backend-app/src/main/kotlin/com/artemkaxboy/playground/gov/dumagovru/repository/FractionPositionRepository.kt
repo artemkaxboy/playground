@@ -14,10 +14,10 @@ class FractionPositionRepository(
     private val personRepository: PersonRepository,
 ) : FractionPositionRepositoryI by fractionPositionRepositoryI {
 
-    fun save(fractionPosition: FractionPosition) {
+    override fun <S : FractionPosition> save(fractionPosition: S): S {
         fractionPosition.fraction?.let { fractionRepository.save(it) }
         fractionPosition.convocation?.let { convocationRepository.save(it) }
         fractionPosition.person?.let { personRepository.save(it) }
-        fractionPositionRepositoryI.save(fractionPosition)
+        return fractionPositionRepositoryI.save(fractionPosition)
     }
 }

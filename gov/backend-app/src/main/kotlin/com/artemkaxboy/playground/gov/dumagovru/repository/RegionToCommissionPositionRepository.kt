@@ -14,9 +14,9 @@ class RegionToCommissionPositionRepository(
     private val commissionPositionRepository: CommissionPositionRepository,
 ) : RegionToCommissionPositionRepositoryI by regionToCommissionPositionRepositoryI {
 
-    fun save(regionToCommissionPosition: RegionToCommissionPosition) {
+    override fun <S : RegionToCommissionPosition> save(regionToCommissionPosition: S): S {
         regionToCommissionPosition.commissionPosition?.let { commissionPositionRepository.save(it) }
         regionToCommissionPosition.region?.let { regionRepository.save(it) }
-        regionToCommissionPositionRepositoryI.save(regionToCommissionPosition)
+        return regionToCommissionPositionRepositoryI.save(regionToCommissionPosition)
     }
 }

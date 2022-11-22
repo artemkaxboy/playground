@@ -10,11 +10,10 @@ interface CountryToCountryRepositoryI : JpaRepository<CountryToCountry, CountryT
 class CountryToCountryRepository(
     private val countryToCountryRepositoryI: CountryToCountryRepositoryI,
     private val countryRepository: CountryRepository,
-) :
-    CountryToCountryRepositoryI by countryToCountryRepositoryI {
+) : CountryToCountryRepositoryI by countryToCountryRepositoryI {
 
-    fun save(countryToCountry: CountryToCountry) {
+    override fun <S : CountryToCountry> save(countryToCountry: S): S {
         countryToCountry.let { listOf(it.fromCountry, it.toCountry) }.let { countryRepository.saveAll(it) }
-        countryToCountryRepositoryI.save(countryToCountry)
+        return countryToCountryRepositoryI.save(countryToCountry)
     }
 }

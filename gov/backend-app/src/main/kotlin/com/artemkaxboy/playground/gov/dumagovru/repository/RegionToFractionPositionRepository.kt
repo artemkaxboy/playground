@@ -14,9 +14,9 @@ class RegionToFractionPositionRepository(
     private val fractionPositionRepository: FractionPositionRepository,
 ) : RegionToFractionPositionRepositoryI by regionToFractionPositionRepositoryI {
 
-    fun save(regionToFractionPosition: RegionToFractionPosition) {
+    override fun <S:RegionToFractionPosition> save(regionToFractionPosition: S): S {
         regionToFractionPosition.fractionPosition?.let { fractionPositionRepository.save(it) }
         regionToFractionPosition.region?.let { regionRepository.save(it) }
-        regionToFractionPositionRepositoryI.save(regionToFractionPosition)
+        return regionToFractionPositionRepositoryI.save(regionToFractionPosition)
     }
 }

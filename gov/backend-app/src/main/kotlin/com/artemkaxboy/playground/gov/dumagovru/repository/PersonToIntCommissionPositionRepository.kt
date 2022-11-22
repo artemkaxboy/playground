@@ -14,9 +14,9 @@ class PersonToIntCommissionPositionRepository(
     private val intCommissionPositionRepository: IntCommissionPositionRepository,
 ) : PersonToIntCommissionPositionRepositoryI by personToIntCommissionPositionRepositoryI {
 
-    fun save(personToIntCommissionPosition: PersonToIntCommissionPosition) {
+    override fun <S : PersonToIntCommissionPosition> save(personToIntCommissionPosition: S): S {
         personToIntCommissionPosition.person?.let { personRepository.save(it) }
         personToIntCommissionPosition.intCommissionPosition?.let { intCommissionPositionRepository.save(it) }
-        personToIntCommissionPositionRepositoryI.save(personToIntCommissionPosition)
+        return personToIntCommissionPositionRepositoryI.save(personToIntCommissionPosition)
     }
 }

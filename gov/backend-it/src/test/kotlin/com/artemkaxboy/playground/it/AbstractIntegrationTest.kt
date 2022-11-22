@@ -1,4 +1,4 @@
-package com.artemkaxboy.playground.it.gov.dumagovru.it
+package com.artemkaxboy.playground.it
 
 import com.artemkaxboy.playground.gov.GovApplication
 import org.junit.runner.RunWith

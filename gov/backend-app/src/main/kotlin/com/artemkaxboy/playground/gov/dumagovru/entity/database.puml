@@ -89,7 +89,9 @@ class region_to_fraction_position {
     (PK, FK) fraction_position_id:  Long
 }
 
+'deleteRegion_deletesAssociatedRegionToFractionPosition
 region               "1" -[#000000,plain]-> "0..*"  region_to_fraction_position
+'deleteFractionPosition_deletesAssociatedRegionToFractionPosition
 fraction_position    "1" -[#000000,plain]-> "0..*"  region_to_fraction_position
 
 class country {
@@ -103,9 +105,9 @@ class country_to_country {
    (PK, FK) to_country_id:  String
 }
 
-'from_id
+'deleteCountry_deletesAssociatedCountryToCountryFrom
 country               "1" -[#000000,plain]-> "0..*"  country_to_country
-'to_id
+'deleteCountry_deletesAssociatedCountryToCountryTo
 country               "1" -[#000000,plain]-> "0..*"  country_to_country
 
 class int_commission {
@@ -120,7 +122,9 @@ class country_to_int_commission {
    (PK, FK) int_commission_id:  Long
 }
 
+'deleteCountry_deletesAssociatedCountryToIntCommission
 country               "1" -[#000000,plain]-> "0..*"  country_to_int_commission
+'deleteIntCommission_deletesAssociatedCountryToIntCommission
 int_commission        "1" -[#000000,plain]-> "0..*"  country_to_int_commission
 
 class int_commission_position {
@@ -132,7 +136,9 @@ class person_to_int_commission_position {
    (PK, FK) int_commission_position_id:  Long
 }
 
+'deletePerson_deletesAssociatedPersonToIntCommissionPosition
 person                  "1" -[#000000,plain]-> "0..*"  person_to_int_commission_position
+'deleteIntCommissionPosition_deletesAssociatedPersonToIntCommissionPosition
 int_commission_position "1" -[#000000,plain]-> "0..*"  person_to_int_commission_position
 
 class int_group {
@@ -147,7 +153,9 @@ class country_to_int_group {
    (PK, FK) int_group_id:  Long
 }
 
+'deleteCountry_deletesAssociatedCountryToIntGroup
 country               "1" -[#000000,plain]-> "0..*"  country_to_int_group
+'deleteIntGroup_deletesAssociatedCountryToIntGroup
 int_group             "1" -[#000000,plain]-> "0..*"  country_to_int_group
 
 class int_group_position {
