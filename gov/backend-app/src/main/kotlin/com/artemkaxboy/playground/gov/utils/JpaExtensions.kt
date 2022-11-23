@@ -6,13 +6,29 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
-inline fun KClass<out Any>.filterFields(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
+/**
+ * Gets all fields with annotations which meet the condition.
+ */
+inline fun KClass<out Any>.getFieldsByAnnotation(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
     return this.declaredMemberProperties
         .filter { field ->
             field.javaField
                 ?.declaredAnnotations
                 ?.mapNotNull { annotation -> annotation.annotationClass.simpleName }
                 ?.any(filter) ?: false
+        }
+}
+
+/**
+ * Gets all fields with annotations which does not meet the condition.
+ */
+inline fun KClass<out Any>.getFieldsSkipByAnnotation(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
+    return this.declaredMemberProperties
+        .filter { field ->
+            field.javaField
+                ?.declaredAnnotations
+                ?.mapNotNull { annotation -> annotation.annotationClass.simpleName }
+                ?.none(filter) ?: false
         }
 }
 
@@ -27,7 +43,7 @@ inline fun entityEquals(predicate: () -> Pair<Any, Any?>): Boolean {
 
     val entityClass = entity::class
 
-    return entityClass.filterFields { it == "Id" }
+    return entityClass.getFieldsByAnnotation { it == "Id" }
         .map { it.getter }
         .all { it.call(entity) == it.call(other) }
 }
@@ -38,7 +54,9 @@ inline fun entityToString(predicate: () -> Any): String {
     val entityClass = entity::class
 
     val values = entityClass
-        .filterFields { !it.endsWith("ToOne") and !it.endsWith("ToMany") }
+        .getFieldsSkipByAnnotation {
+            it.endsWith("ToOne") || it.endsWith("ToMany")
+        }
         .map { it.name + " = " + it.getter.call(entity) }
 
     return getClassName(entityClass) + "(" + values.joinToString() + ")"
