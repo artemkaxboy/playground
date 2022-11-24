@@ -5,12 +5,13 @@ import com.artemkaxboy.playground.gov.utils.entityHashCode
 import com.artemkaxboy.playground.gov.utils.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.OneToOne
 
 @Entity
 data class IntGroupPosition(
@@ -19,13 +20,10 @@ data class IntGroupPosition(
     @Column(nullable = false)
     val id: Long? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "int_group_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "int_group_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val intGroup: IntGroup? = null,
-
-    @Column(nullable = false, name = "int_group_id")
-    val intGroupId : Long? = intGroup?.id,
 
     @Column(columnDefinition = "TEXT", nullable = false)
     val title: String = "",
@@ -39,11 +37,9 @@ data class IntGroupPosition(
 fun makeIntGroupPosition(
     id: Long = 1L,
     intGroup: IntGroup? = makeIntGroup(),
-    intGroupId: Long = intGroup!!.id!!,
     title: String = "title",
 ) = IntGroupPosition(
     id = id,
     intGroup = intGroup,
-    intGroupId = intGroupId,
     title = title,
 )

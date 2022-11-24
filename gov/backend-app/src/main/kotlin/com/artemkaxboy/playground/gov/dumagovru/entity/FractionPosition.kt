@@ -6,44 +6,36 @@ import com.artemkaxboy.playground.gov.utils.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.OneToOne
 
 @Entity
 @IdClass(FractionPosition.IdClass::class)
 data class FractionPosition(
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "convocation_id", insertable = false, updatable = false)
+    @Id
+    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "convocation_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val convocation: Convocation? = null,
 
     @Id
-    @Column(name = "convocation_id", nullable = false)
-    val convocationId: Long? = convocation?.id,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fraction_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "fraction_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val fraction: Fraction? = null,
 
     @Id
-    @Column(name = "fraction_id", nullable = false)
-    val fractionId: Long? = fraction?.id,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "person_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,
-
-    @Id
-    @Column(name = "person_id", nullable = false)
-    val personId: Long? = person?.id,
 
     @Column(nullable = false)
     val actual: Boolean = false,
@@ -60,29 +52,23 @@ data class FractionPosition(
     override fun toString() = entityToString { this }
 
     data class IdClass(
-        val convocationId: Long? = null,
-        val fractionId: Long? = null,
-        val personId: Long? = null,
+        val convocation: Long? = null,
+        val fraction: Long? = null,
+        val person: Long? = null,
     ) : Serializable
 }
 
 fun makeFractionPosition(
     convocation: Convocation = makeConvocation(),
-    convocationId: Long = convocation.id!!,
     fraction: Fraction = makeFraction(),
-    fractionId: Long = fraction.id!!,
     person: Person = makePerson(),
-    personId: Long = person.id!!,
     actual: Boolean = true,
     placeInHallColumn: Int? = 1,
     placeInHallRow: Int? = 1,
 ) = FractionPosition(
     convocation = convocation,
-    convocationId = convocationId,
     fraction = fraction,
-    fractionId = fractionId,
     person = person,
-    personId = personId,
     actual = actual,
     placeInHallColumn = placeInHallColumn,
     placeInHallRow = placeInHallRow,

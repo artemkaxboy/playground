@@ -40,7 +40,7 @@ internal class FractionPositionTest : AbstractIntegrationTest() {
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM convocation WHERE id = ${expected.convocationId}")
+        entityManager.createNativeQuery("DELETE FROM convocation WHERE id = ${expected.convocation?.id}")
             .executeUpdate()
         convocationRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -59,7 +59,7 @@ internal class FractionPositionTest : AbstractIntegrationTest() {
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM fraction WHERE id = ${expected.fractionId}")
+        entityManager.createNativeQuery("DELETE FROM fraction WHERE id = ${expected.fraction?.id}")
             .executeUpdate()
         fractionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -78,7 +78,7 @@ internal class FractionPositionTest : AbstractIntegrationTest() {
         fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.person?.id}")
             .executeUpdate()
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

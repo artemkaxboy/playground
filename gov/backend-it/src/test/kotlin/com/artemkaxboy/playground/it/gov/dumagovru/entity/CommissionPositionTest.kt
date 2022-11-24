@@ -35,7 +35,7 @@ internal class CommissionPositionTest : AbstractIntegrationTest() {
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM commission WHERE id = ${expected.commissionId}")
+        entityManager.createNativeQuery("DELETE FROM commission WHERE id = ${expected.commission?.id}")
             .executeUpdate()
         commissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -52,7 +52,7 @@ internal class CommissionPositionTest : AbstractIntegrationTest() {
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         commissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.person?.id}")
             .executeUpdate()
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

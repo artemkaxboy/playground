@@ -30,7 +30,7 @@ internal class CountryToCountryTest : AbstractIntegrationTest() {
         countryRepository.findAll().let { Assertions.assertThat(it).hasSize(2) }
         countryToCountryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM country WHERE id = '${expected.fromCountyId}'")
+        entityManager.createNativeQuery("DELETE FROM country WHERE id = '${expected.fromCountry?.id}'")
             .executeUpdate()
         countryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         countryToCountryRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -45,7 +45,7 @@ internal class CountryToCountryTest : AbstractIntegrationTest() {
         countryRepository.findAll().let { Assertions.assertThat(it).hasSize(2) }
         countryToCountryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM country WHERE id = '${expected.toCountyId}'")
+        entityManager.createNativeQuery("DELETE FROM country WHERE id = '${expected.toCountry?.id}'")
             .executeUpdate()
         countryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         countryToCountryRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

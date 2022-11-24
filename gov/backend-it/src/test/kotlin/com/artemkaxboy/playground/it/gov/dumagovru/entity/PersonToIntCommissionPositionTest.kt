@@ -36,7 +36,7 @@ internal class PersonToIntCommissionPositionTest : AbstractIntegrationTest() {
         intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager
-            .createNativeQuery("DELETE FROM int_commission_position WHERE id = ${expected.intCommissionPositionId}")
+            .createNativeQuery("DELETE FROM int_commission_position WHERE id = ${expected.intCommissionPosition?.id}")
             .executeUpdate()
         intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -53,8 +53,7 @@ internal class PersonToIntCommissionPositionTest : AbstractIntegrationTest() {
         personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
-            .executeUpdate()
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.person?.id}").executeUpdate()
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personToIntCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         intCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }

@@ -6,35 +6,29 @@ import com.artemkaxboy.playground.gov.utils.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
-import javax.persistence.Column
+import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import javax.persistence.OneToOne
 
 @Entity
 @IdClass(CountryToIntGroup.IdClass::class)
 data class CountryToIntGroup(
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "country_id", insertable = false, updatable = false)
+    @Id
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "country_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val country: Country? = null,
 
     @Id
-    @Column(name = "country_id", nullable = false, columnDefinition = "TEXT")
-    val countryId: String? = country?.id,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "int_group_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "int_group_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val intGroup: IntGroup? = null,
-
-    @Id
-    @Column(name = "int_group_id", nullable = false)
-    val intGroupId: Long? = intGroup?.id,
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }
@@ -42,19 +36,15 @@ data class CountryToIntGroup(
     override fun toString() = entityToString { this }
 
     data class IdClass(
-        val countryId: String? = null,
-        val intGroupId: Long? = null,
+        val country: String? = null,
+        val intGroup: Long? = null,
     ) : Serializable
 }
 
 fun makeCountryToIntGroup(
     country: Country? = makeCountry(),
-    countryId: String? = country?.id,
     intGroup: IntGroup? = makeIntGroup(),
-    intGroupId: Long? = intGroup?.id,
 ) = CountryToIntGroup(
     country = country,
-    countryId = countryId,
     intGroup = intGroup,
-    intGroupId = intGroupId,
 )

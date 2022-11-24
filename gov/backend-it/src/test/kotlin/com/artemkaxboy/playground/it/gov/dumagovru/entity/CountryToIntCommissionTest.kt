@@ -35,7 +35,7 @@ internal class CountryToIntCommissionTest : AbstractIntegrationTest() {
         countryRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager
-            .createNativeQuery("DELETE FROM int_commission WHERE id = ${expected.intCommissionId}")
+            .createNativeQuery("DELETE FROM int_commission WHERE id = ${expected.intCommission?.id}")
             .executeUpdate()
         countryToIntCommissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         intCommissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -52,7 +52,7 @@ internal class CountryToIntCommissionTest : AbstractIntegrationTest() {
         countryToIntCommissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         intCommissionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM country WHERE id = '${expected.countryId}'")
+        entityManager.createNativeQuery("DELETE FROM country WHERE id = '${expected.country?.id}'")
             .executeUpdate()
         countryRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         countryToIntCommissionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

@@ -6,6 +6,7 @@ import com.artemkaxboy.playground.gov.utils.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -18,23 +19,17 @@ import javax.persistence.OneToOne
 @IdClass(PersonToStaffOrg.IdClass::class)
 data class PersonToStaffOrg(
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "person_id", insertable = false, updatable = false)
+    @Id
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "person_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,
 
     @Id
-    @Column(name = "person_id", nullable = false)
-    val personId: Long? = person?.id,
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "staff_org_id", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "staff_org_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val staffOrg: StaffOrg? = null,
-
-    @Id
-    @Column(name = "staff_org_id", nullable = false)
-    val staffOrgId: Long? = staffOrg?.id,
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }
@@ -42,8 +37,8 @@ data class PersonToStaffOrg(
     override fun toString() = entityToString { this }
 
     data class IdClass(
-        val personId: Long? = null,
-        val staffOrgId: Long? = null,
+        val person: Long? = null,
+        val staffOrg: Long? = null,
     ) : Serializable
 }
 
@@ -52,10 +47,9 @@ fun makePersonToStaffOrg(
     personId: Long = person!!.id!!,
     staffOrg: StaffOrg? = makeStaffOrg(),
     staffOrgId: Long = staffOrg!!.id!!,
-) =
-    PersonToStaffOrg(
-        person = person,
-        personId = personId,
-        staffOrg = staffOrg,
-        staffOrgId = staffOrgId,
-    )
+) = PersonToStaffOrg(
+    person = person,
+//        personId = personId,
+    staffOrg = staffOrg,
+//        staffOrgId = staffOrgId,
+)

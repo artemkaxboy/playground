@@ -30,7 +30,7 @@ internal class IntGroupPositionTest : AbstractIntegrationTest() {
         intGroupRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         intGroupPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM int_group WHERE id = '${expected.intGroupId}'")
+        entityManager.createNativeQuery("DELETE FROM int_group WHERE id = '${expected.intGroup?.id}'")
             .executeUpdate()
         intGroupRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         intGroupPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

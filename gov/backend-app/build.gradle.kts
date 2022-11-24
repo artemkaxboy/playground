@@ -1,10 +1,10 @@
-apply {
-    plugin("org.springframework.boot")
-    plugin("io.spring.dependency-management")
-    plugin("org.jetbrains.kotlin.jvm")
-    plugin("org.jetbrains.kotlin.plugin.spring")
-    plugin("org.jetbrains.kotlin.plugin.jpa")
-    plugin("org.jetbrains.kotlin.plugin.serialization")
+plugins {
+    id("org.springframework.boot") apply true
+    id("io.spring.dependency-management") apply true
+    kotlin("jvm") apply true
+    kotlin("plugin.spring") apply true
+    kotlin("plugin.jpa") apply true
+    kotlin("plugin.serialization") apply true
 }
 
 dependencies {
@@ -23,4 +23,8 @@ dependencies {
 
     // tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
 }

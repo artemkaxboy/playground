@@ -52,7 +52,7 @@ internal class RegionToCommissionPositionTest : AbstractIntegrationTest() {
         regionToCommissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         commissionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM region WHERE id = ${expected.regionId}")
+        entityManager.createNativeQuery("DELETE FROM region WHERE id = ${expected.region?.id}")
             .executeUpdate()
         regionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         regionToCommissionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }

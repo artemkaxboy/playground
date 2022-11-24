@@ -36,7 +36,7 @@ internal class PersonToStaffOrgTest : AbstractIntegrationTest() {
         staffOrgRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager
-            .createNativeQuery("DELETE FROM staff_org WHERE id = ${expected.staffOrgId}")
+            .createNativeQuery("DELETE FROM staff_org WHERE id = ${expected.staffOrg?.id}")
             .executeUpdate()
         staffOrgRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personToStaffOrgRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -53,8 +53,7 @@ internal class PersonToStaffOrgTest : AbstractIntegrationTest() {
         personToStaffOrgRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         staffOrgRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
-            .executeUpdate()
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.person?.id}").executeUpdate()
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personToStaffOrgRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         staffOrgRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }

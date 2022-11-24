@@ -36,7 +36,7 @@ internal class PersonToIntGroupPositionTest : AbstractIntegrationTest() {
         intGroupPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager
-            .createNativeQuery("DELETE FROM int_group_position WHERE id = ${expected.intGroupPositionId}")
+            .createNativeQuery("DELETE FROM int_group_position WHERE id = ${expected.intGroupPosition?.id}")
             .executeUpdate()
         intGroupPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personToIntGroupPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -53,8 +53,7 @@ internal class PersonToIntGroupPositionTest : AbstractIntegrationTest() {
         personToIntGroupPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         intGroupPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.personId}")
-            .executeUpdate()
+        entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.person?.id}").executeUpdate()
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personToIntGroupPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         intGroupPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }

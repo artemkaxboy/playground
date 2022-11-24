@@ -6,6 +6,7 @@ import com.artemkaxboy.playground.gov.utils.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -13,41 +14,38 @@ import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
 import javax.persistence.JoinColumns
-import javax.persistence.ManyToOne
+import javax.persistence.OneToOne
 
 @Entity
 @IdClass(RegionToFractionPosition.IdClass::class)
 data class RegionToFractionPosition(
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", insertable = false, updatable = false)
+    @Id
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @JoinColumn(name = "region_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val region: Region? = null,
 
-    @Id
-    @Column(name = "region_id", nullable = false, columnDefinition = "TEXT")
-    val regionId: String? = region?.id,
-
     @JoinColumns(
-        JoinColumn(name = "convocation_id", insertable = false, updatable = false),
-        JoinColumn(name = "fraction_id", insertable = false, updatable = false),
-        JoinColumn(name = "person_id", insertable = false, updatable = false),
+        JoinColumn(name = "convocation_id", insertable = false, updatable = false, nullable = false),
+        JoinColumn(name = "fraction_id", insertable = false, updatable = false, nullable = false),
+        JoinColumn(name = "person_id", insertable = false, updatable = false, nullable = false),
     )
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val fractionPosition: FractionPosition? = null,
 
     @Id
-    @Column(name = "convocation_id", nullable = false)
-    val convocationId: Long? = fractionPosition?.convocationId,
+    @Column(name = "convocation_id", insertable = false, updatable = false)
+    val convocationId: Long? = fractionPosition?.convocation?.id,
 
     @Id
-    @Column(name = "fraction_id", nullable = false)
-    val fractionId: Long? = fractionPosition?.fractionId,
+    @Column(name = "fraction_id", insertable = false, updatable = false)
+    val fractionId: Long? = fractionPosition?.fraction?.id,
 
     @Id
-    @Column(name = "person_id", nullable = false)
-    val personId: Long? = fractionPosition?.personId,
+    @Column(name = "person_id", insertable = false, updatable = false)
+    val personId: Long? = fractionPosition?.person?.id,
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }
@@ -55,7 +53,7 @@ data class RegionToFractionPosition(
     override fun toString() = entityToString { this }
 
     data class IdClass(
-        val regionId: String? = null,
+        val region: String? = null,
         val convocationId: Long? = null,
         val fractionId: Long? = null,
         val personId: Long? = null,
@@ -64,16 +62,8 @@ data class RegionToFractionPosition(
 
 fun makeRegionToFractionPosition(
     region: Region = makeRegion(),
-    regionId: String = region.id!!,
     fractionPosition: FractionPosition = makeFractionPosition(),
-    convocationId: Long = fractionPosition.convocationId!!,
-    fractionId: Long = fractionPosition.fractionId!!,
-    personId: Long = fractionPosition.personId!!,
 ) = RegionToFractionPosition(
     region = region,
-    regionId = regionId,
     fractionPosition = fractionPosition,
-    convocationId = convocationId,
-    fractionId = fractionId,
-    personId = personId,
 )

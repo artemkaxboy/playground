@@ -37,9 +37,9 @@ internal class RegionToFractionPositionTest : AbstractIntegrationTest() {
 
         entityManager.createNativeQuery(
             "DELETE FROM fraction_position " +
-                    "WHERE person_id = ${expected.fractionPosition?.personId} " +
-                    "AND fraction_id = ${expected.fractionPosition?.fractionId} " +
-                    "AND convocation_id = ${expected.fractionPosition?.convocationId}"
+                    "WHERE person_id = ${expected.fractionPosition?.person?.id} " +
+                    "AND fraction_id = ${expected.fractionPosition?.fraction?.id} " +
+                    "AND convocation_id = ${expected.fractionPosition?.convocation?.id}"
         )
             .executeUpdate()
         regionToFractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
@@ -57,7 +57,7 @@ internal class RegionToFractionPositionTest : AbstractIntegrationTest() {
         regionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
-        entityManager.createNativeQuery("DELETE FROM region WHERE id = ${expected.regionId}")
+        entityManager.createNativeQuery("DELETE FROM region WHERE id = ${expected.region?.id}")
             .executeUpdate()
         regionToFractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         regionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
