@@ -20,19 +20,19 @@ import javax.persistence.OneToOne
 data class FractionPosition(
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = [CascadeType.ALL])
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
     @JoinColumn(name = "convocation_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val convocation: Convocation? = null,
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = [CascadeType.ALL])
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
     @JoinColumn(name = "fraction_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val fraction: Fraction? = null,
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, optional = false, cascade = [CascadeType.ALL])
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
     @JoinColumn(name = "person_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,

@@ -22,7 +22,7 @@ data class RegionToFractionPosition(
 
     @Id
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
-    @JoinColumn(name = "region_id", nullable = false)
+    @JoinColumn(name = "region_id", nullable = false, columnDefinition = "TEXT")
     @OnDelete(action = OnDeleteAction.CASCADE)
     val region: Region? = null,
 

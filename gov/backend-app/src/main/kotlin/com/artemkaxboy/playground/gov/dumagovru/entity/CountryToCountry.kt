@@ -20,13 +20,13 @@ data class CountryToCountry(
 
     @Id
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
-    @JoinColumn(name = "from_country_id", nullable = false)
+    @JoinColumn(name = "from_country_id", nullable = false, columnDefinition = "TEXT")
     @OnDelete(action = OnDeleteAction.CASCADE)
     val fromCountry: Country? = null,
 
     @Id
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
-    @JoinColumn(name = "to_country_id", nullable = false)
+    @JoinColumn(name = "to_country_id", nullable = false, columnDefinition = "TEXT")
     @OnDelete(action = OnDeleteAction.CASCADE)
     val toCountry: Country? = null,
 ) {

@@ -20,7 +20,7 @@ data class CountryToIntGroup(
 
     @Id
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
-    @JoinColumn(name = "country_id", nullable = false)
+    @JoinColumn(name = "country_id", nullable = false, columnDefinition = "TEXT")
     @OnDelete(action = OnDeleteAction.CASCADE)
     val country: Country? = null,
 
