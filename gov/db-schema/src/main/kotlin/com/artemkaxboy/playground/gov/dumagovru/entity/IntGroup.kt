@@ -1,8 +1,8 @@
 package com.artemkaxboy.playground.gov.dumagovru.entity
 
-import com.artemkaxboy.playground.gov.utils.entityEquals
-import com.artemkaxboy.playground.gov.utils.entityHashCode
-import com.artemkaxboy.playground.gov.utils.entityToString
+import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityEquals
+import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityHashCode
+import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id

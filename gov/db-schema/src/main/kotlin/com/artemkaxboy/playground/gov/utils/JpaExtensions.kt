@@ -6,62 +6,65 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
-/**
- * Gets all fields with annotations which meet the condition.
- */
-inline fun KClass<out Any>.getFieldsByAnnotation(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
-    return this.declaredMemberProperties
-        .filter { field ->
-            field.javaField
-                ?.declaredAnnotations
-                ?.mapNotNull { annotation -> annotation.annotationClass.simpleName }
-                ?.any(filter) ?: false
-        }
-}
+object JpaExtensions {
 
-/**
- * Gets all fields with annotations which does not meet the condition.
- */
-inline fun KClass<out Any>.getFieldsSkipByAnnotation(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
-    return this.declaredMemberProperties
-        .filter { field ->
-            field.javaField
-                ?.declaredAnnotations
-                ?.mapNotNull { annotation -> annotation.annotationClass.simpleName }
-                ?.none(filter) ?: false
-        }
-}
+    /**
+     * Gets all fields with annotations which meet the condition.
+     */
+    inline fun KClass<out Any>.getFieldsByAnnotation(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
+        return this.declaredMemberProperties
+            .filter { field ->
+                field.javaField
+                    ?.declaredAnnotations
+                    ?.mapNotNull { annotation -> annotation.annotationClass.simpleName }
+                    ?.any(filter) ?: false
+            }
+    }
 
-inline fun <reified T : Any> entityHashCode(predicate: () -> T): Int =
-    predicate()::class.hashCode()
+    /**
+     * Gets all fields with annotations which does not meet the condition.
+     */
+    inline fun KClass<out Any>.getFieldsSkipByAnnotation(filter: (String) -> Boolean): List<KProperty1<out Any, *>> {
+        return this.declaredMemberProperties
+            .filter { field ->
+                field.javaField
+                    ?.declaredAnnotations
+                    ?.mapNotNull { annotation -> annotation.annotationClass.simpleName }
+                    ?.none(filter) ?: false
+            }
+    }
 
-inline fun entityEquals(predicate: () -> Pair<Any, Any?>): Boolean {
-    val (entity, other) = predicate()
+    inline fun <reified T : Any> entityHashCode(predicate: () -> T): Int =
+        predicate()::class.hashCode()
 
-    if (entity === other) return true
-    if (other == null || Hibernate.getClass(entity) != Hibernate.getClass(other)) return false
+    inline fun entityEquals(predicate: () -> Pair<Any, Any?>): Boolean {
+        val (entity, other) = predicate()
 
-    val entityClass = entity::class
+        if (entity === other) return true
+        if (other == null || Hibernate.getClass(entity) != Hibernate.getClass(other)) return false
 
-    return entityClass.getFieldsByAnnotation { it == "Id" }
-        .map { it.getter }
-        .all { it.call(entity) == it.call(other) }
-}
+        val entityClass = entity::class
 
-inline fun entityToString(predicate: () -> Any): String {
-    val entity = predicate()
+        return entityClass.getFieldsByAnnotation { it == "Id" }
+            .map { it.getter }
+            .all { it.call(entity) == it.call(other) }
+    }
 
-    val entityClass = entity::class
+    inline fun entityToString(predicate: () -> Any): String {
+        val entity = predicate()
 
-    val values = entityClass
-        .getFieldsSkipByAnnotation {
-            it.endsWith("ToOne") || it.endsWith("ToMany")
-        }
-        .map { it.name + " = " + it.getter.call(entity) }
+        val entityClass = entity::class
 
-    return getClassName(entityClass) + "(" + values.joinToString() + ")"
-}
+        val values = entityClass
+            .getFieldsSkipByAnnotation {
+                it.endsWith("ToOne") || it.endsWith("ToMany")
+            }
+            .map { it.name + " = " + it.getter.call(entity) }
 
-fun getClassName(clazz: KClass<*>): String {
-    return clazz.simpleName ?: clazz.qualifiedName ?: "Unknown"
+        return getClassName(entityClass) + "(" + values.joinToString() + ")"
+    }
+
+    fun getClassName(clazz: KClass<*>): String {
+        return clazz.simpleName ?: clazz.qualifiedName ?: "Unknown"
+    }
 }
