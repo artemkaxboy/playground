@@ -1,6 +1,7 @@
 package com.artemkaxboy.playground.gov.utils
 
 import org.hibernate.Hibernate
+import org.hibernate.proxy.HibernateProxy
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
@@ -61,7 +62,14 @@ object JpaExtensions {
             }
             .map { it.name + " = " + it.getter.call(entity) }
 
-        return getClassName(entityClass) + "(" + values.joinToString() + ")"
+        val foreignKeys = entityClass
+            .getFieldsByAnnotation { it.endsWith("ToOne") || it.endsWith("ToMany") }
+            .map { it.name to it.getter.call(entity) }
+            .map { it.first to (it.second as? HibernateProxy)?.hibernateLazyInitializer?.identifier }
+            .filter { it.second != null }
+            .map { it.first + " = " + it.second }
+
+        return getClassName(entityClass) + "(" + (foreignKeys + values).joinToString() + ")"
     }
 
     fun getClassName(clazz: KClass<*>): String {
