@@ -8,9 +8,6 @@ plugins {
 }
 
 dependencies {
-    // siblings
-    api(project(":db-schema"))
-
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
