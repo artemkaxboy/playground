@@ -51,12 +51,12 @@ class DbInitializer(
         val data = json.decodeFromString<ApplicationDataDto>(jsonString)
 
         // todo save lastConvocation and version
-        savePeople(extractPeople(data))
-        saveFractions(extractFractions(data))
+        saveCommissions(extractCommissions(data)) // needs: nothing
+        saveFractions(extractFractions(data)) // needs: nothing
+        savePeople(extractPeople(data)) // need: commission fraction, inner: staffOrg
         saveIntGroups(extractIntGroups(data))
         saveIntCommissions(extractIntCommissions(data))
         saveCountries(extractCountries(data))
-        saveCommissions(extractCommissions(data))
         saveRegions(extractRegions(data))
         saveConvocations(extractConvocations(data))
 
