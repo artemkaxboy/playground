@@ -1,5 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
+import com.artemkaxboy.playground.gov.dumagovru.entity.StaffOrg
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,4 +10,10 @@ data class StaffOrgDto(
     val orgTitle: String?,
 
     val org: Long,
-)
+) {
+
+    fun toEntity() = StaffOrg(
+        id = org,
+        title = orgTitle?.asPrintable(),
+    )
+}

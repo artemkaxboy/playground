@@ -14,7 +14,7 @@ data class StaffOrg(
     @Column(nullable = false)
     val id: Long? = null,
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT")
     val title: String? = null,
 ) {
 

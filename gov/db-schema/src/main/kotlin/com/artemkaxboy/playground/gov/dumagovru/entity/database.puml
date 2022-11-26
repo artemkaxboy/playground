@@ -13,6 +13,7 @@ class person {
    original_ais_person_id: Long?
    photo: String?
    url: String?
+   staff_org_id: Long?
 }
 
 class commission {
@@ -182,14 +183,6 @@ class staff_org {
    title: String
 }
 
-class person_to_staff_org {
-   (PK, FK) person_id: Long
-   (PK, FK) staff_org_id: Long
-}
-
-'deletePerson_deletesAssociatedPersonToStaffOrg
-person                "1" -[#000000,plain]-> "0..*"  person_to_staff_org
-'deleteStaffOrg_deletesAssociatedPersonToStaffOrg
-staff_org             "1" -[#000000,plain]-> "0..*"  person_to_staff_org
+person                "0..*" -[#000000,plain]-> "1"  staff_org
 
 @enduml

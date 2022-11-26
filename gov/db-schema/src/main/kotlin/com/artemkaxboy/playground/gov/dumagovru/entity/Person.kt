@@ -3,9 +3,13 @@ package com.artemkaxboy.playground.gov.dumagovru.entity
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityEquals
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityHashCode
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.ForeignKey
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 
 @Entity
 data class Person(
@@ -37,6 +41,16 @@ data class Person(
 
     @Column(columnDefinition = "TEXT")
     val url: String? = null,
+
+    // todo add staff, fraction, commission
+    @ManyToOne(cascade = [CascadeType.MERGE])
+    @JoinColumn(
+        name = "staff_org_id",
+        foreignKey = ForeignKey(
+            foreignKeyDefinition = "foreign key (staff_org_id) references staff_org on delete set null"
+        )
+    )
+    var staffOrg: StaffOrg? = null,
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }
@@ -54,6 +68,7 @@ fun makePerson(
     originalAisPersonId: Long? = 1L,
     photo: String? = "https://photo$id",
     url: String? = "https://url$id",
+    staffOrg: StaffOrg? = makeStaffOrg(),
 ): Person = Person(
     id = id,
     firstName = firstName,
@@ -64,4 +79,5 @@ fun makePerson(
     originalAisPersonId = originalAisPersonId,
     photo = photo,
     url = url,
+    staffOrg = staffOrg,
 )

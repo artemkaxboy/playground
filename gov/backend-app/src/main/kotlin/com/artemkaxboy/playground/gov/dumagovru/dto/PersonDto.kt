@@ -52,5 +52,6 @@ data class PersonDto(
         lead = lead.asPrintable(),
         title = title.asPrintable(),
         url = url.asUrl(DUMA_GOV_RU)?.asPrintable(),
+        staffOrg = staffOrg?.toEntity(),
     )
 }
