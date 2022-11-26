@@ -16,7 +16,6 @@ import org.testcontainers.containers.PostgreSQLContainer
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [GovApplication::class])
 @ContextConfiguration(initializers = [AbstractIntegrationTest.Initializer::class])
-@AutoConfigureMockMvc
 abstract class AbstractIntegrationTest {
 
     companion object {

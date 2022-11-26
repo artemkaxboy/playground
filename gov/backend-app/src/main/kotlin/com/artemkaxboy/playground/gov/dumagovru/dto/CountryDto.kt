@@ -1,7 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
 import com.artemkaxboy.playground.gov.dumagovru.entity.Country
-import com.artemkaxboy.playground.gov.dumagovru.entity.CountryToCountry
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,9 +20,17 @@ data class CountryDto(
         title = title.asPrintable(),
         url = url?.asUrl(DUMA_GOV_RU)?.asPrintable(),
     )
+}
 
-    fun toEntity(associated: Set<Country>) = CountryToCountry(
-        fromCountry = associated.first { it.id == id },
-        toCountry = associated.first { it.id == id },
-    )
+fun Collection<CountryDto>.toEntities(): List<Country> {
+
+    val entitiesWithEmptyAssociation = map { it.toEntity() }.associateBy { it.id!! }
+
+    return mapNotNull { dto ->
+        entitiesWithEmptyAssociation[dto.id]?.apply {
+            dto.associated
+                ?.mapNotNull { entitiesWithEmptyAssociation[it] }
+                ?.let { associatedCountries.addAll(it) }
+        }
+    }
 }

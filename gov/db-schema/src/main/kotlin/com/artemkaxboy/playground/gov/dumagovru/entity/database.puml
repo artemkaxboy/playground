@@ -4,31 +4,31 @@ top to bottom direction
 skinparam linetype ortho
 
 class person {
-   (PK) id:  Long
-   first_name:  String
-   second_name:  String?
-   last_name:  String
-   title:  String
-   lead:  String?
-   original_ais_person_id:  Long?
-   photo:  String?
-   url:  String?
+   (PK) id: Long
+   first_name: String
+   second_name: String?
+   last_name: String
+   title: String
+   lead: String?
+   original_ais_person_id: Long?
+   photo: String?
+   url: String?
 }
 
 class commission {
-   (PK) id:  Long
-   title:  String
-   short_title:  String?
-   description:  String?
-   type:  String?
-   url_website:  String?
+   (PK) id: Long
+   title: String
+   short_title: String?
+   description: String?
+   type: String?
+   url_website: String?
 }
 
 class commission_position {
-   (PK, FK) person_id:  Long
-   (PK, FK) commission_id:  Long
-   position_text:  String
-   position_type:  String?
+   (PK, FK) person_id: Long
+   (PK, FK) commission_id: Long
+   position_text: String
+   position_type: String?
 }
 
 'main .(delete cascade). secondary
@@ -38,14 +38,14 @@ person                "1" -[#000000,plain]-> "0..*"  commission_position
 commission            "1" -[#000000,plain]-> "0..*"  commission_position
 
 class region {
-   (PK) id:  String
-   title:  String
+   (PK) id: String
+   title: String
 }
 
 class region_to_commission_position {
-   (PK, FK) region_id:  String
-   (PK, FK) person_id:  Long
-   (PK, FK) commission_id:  Long
+   (PK, FK) region_id: String
+   (PK, FK) person_id: Long
+   (PK, FK) commission_id: Long
 }
 
 'deleteRegion_deletesAssociatedRegionToCommissionPosition
@@ -54,27 +54,27 @@ region               "1" -[#000000,plain]-> "0..*"  region_to_commission_positio
 commission_position  "1" -[#000000,plain]-> "0..*"  region_to_commission_position
 
 class convocation {
-   (PK) id:  Long
-   num_genitive:  String
-   deputies_url:  String?
+   (PK) id: Long
+   num_genitive: String
+   deputies_url: String?
 }
 
 class fraction {
-   (PK) id:  Long
-   title:  String
-   short_title:  String?
-   description:  String?
-   type:  String?
-   url_website:  String?
+   (PK) id: Long
+   title: String
+   short_title: String?
+   description: String?
+   type: String?
+   url_website: String?
 }
 
 class fraction_position {
-   (PK, FK) convocation_id:  Long
-   (PK, FK) fraction_id:  Long
-   (PK, FK) person_id:  Long
-   actual:  boolean
-   place_in_hall_column:  Integer?
-   place_in_hall_row:  Integer?
+   (PK, FK) convocation_id: Long
+   (PK, FK) fraction_id: Long
+   (PK, FK) person_id: Long
+   actual: boolean
+   place_in_hall_column: Integer?
+   place_in_hall_row: Integer?
 }
 
 'deleteConvocation_deletesAssociatedFractionPosition
@@ -85,8 +85,8 @@ fraction              "1" -[#000000,plain]-> "0..*"  fraction_position
 person                "1" -[#000000,plain]-> "0..*"  fraction_position
 
 class region_to_fraction_position {
-    (PK, FK) region_id:  String
-    (PK, FK) fraction_position_id:  Long
+    (PK, FK) region_id: String
+    (PK, FK) fraction_position_id: Long
 }
 
 'deleteRegion_deletesAssociatedRegionToFractionPosition
@@ -95,14 +95,14 @@ region               "1" -[#000000,plain]-> "0..*"  region_to_fraction_position
 fraction_position    "1" -[#000000,plain]-> "0..*"  region_to_fraction_position
 
 class country {
-   (PK) id:  String
-   title:  String
-   url:  String?
+   (PK) id: String
+   title: String
+   url: String?
 }
 
 class country_to_country {
-   (PK, FK) from_country_id:  String
-   (PK, FK) to_country_id:  String
+   (PK, FK) country_id: String
+   (PK, FK) associated_country_id: String
 }
 
 'deleteCountry_deletesAssociatedCountryToCountryFrom
@@ -111,15 +111,15 @@ country               "1" -[#000000,plain]-> "0..*"  country_to_country
 country               "1" -[#000000,plain]-> "0..*"  country_to_country
 
 class int_commission {
-   (PK) id:  Long
-   title:  String
-   lead:  String?
-   url_website:  String?
+   (PK) id: Long
+   title: String
+   lead: String?
+   url_website: String?
 }
 
 class country_to_int_commission {
-   (PK, FK) country_id:  String
-   (PK, FK) int_commission_id:  Long
+   (PK, FK) country_id: String
+   (PK, FK) int_commission_id: Long
 }
 
 'deleteCountry_deletesAssociatedCountryToIntCommission
@@ -128,12 +128,12 @@ country               "1" -[#000000,plain]-> "0..*"  country_to_int_commission
 int_commission        "1" -[#000000,plain]-> "0..*"  country_to_int_commission
 
 class int_commission_position {
-   (PK) id:  Long
-   title:  String
+   (PK) id: Long
+   title: String
 }
 class person_to_int_commission_position {
-   (PK, FK) person_id:  Long
-   (PK, FK) int_commission_position_id:  Long
+   (PK, FK) person_id: Long
+   (PK, FK) int_commission_position_id: Long
 }
 
 'deletePerson_deletesAssociatedPersonToIntCommissionPosition
@@ -142,15 +142,15 @@ person                  "1" -[#000000,plain]-> "0..*"  person_to_int_commission_
 int_commission_position "1" -[#000000,plain]-> "0..*"  person_to_int_commission_position
 
 class int_group {
-   (PK) id:  Long
-   title:  String
-   lead:  String?
-   url_website:  String?
+   (PK) id: Long
+   title: String
+   lead: String?
+   url_website: String?
 }
 
 class country_to_int_group {
-   (PK, FK) country_id:  String
-   (PK, FK) int_group_id:  Long
+   (PK, FK) country_id: String
+   (PK, FK) int_group_id: Long
 }
 
 'deleteCountry_deletesAssociatedCountryToIntGroup
@@ -159,17 +159,17 @@ country               "1" -[#000000,plain]-> "0..*"  country_to_int_group
 int_group             "1" -[#000000,plain]-> "0..*"  country_to_int_group
 
 class int_group_position {
-   (PK) id:  Long
-   (FK) int_group_id:  Long
-   title:  String
+   (PK) id: Long
+   (FK) int_group_id: Long
+   title: String
 }
 
 'deleteIntGroup_deletesAssociatedIntGroupPosition
 int_group             "1" -[#000000,plain]-> "0..*"  int_group_position
 
 class person_to_int_group_position {
-   (PK, FK) person_id:  Long
-   (PK, FK) int_group_position_id:  Long
+   (PK, FK) person_id: Long
+   (PK, FK) int_group_position_id: Long
 }
 
 'deletePerson_deletesAssociatedPersonToIntGroupPosition
@@ -178,13 +178,13 @@ person                "1" -[#000000,plain]-> "0..*"  person_to_int_group_positio
 int_group_position    "1" -[#000000,plain]-> "0..*"  person_to_int_group_position
 
 class staff_org {
-   (PK) id:  Long
-   title:  String
+   (PK) id: Long
+   title: String
 }
 
 class person_to_staff_org {
-   (PK, FK) person_id:  Long
-   (PK, FK) staff_org_id:  Long
+   (PK, FK) person_id: Long
+   (PK, FK) staff_org_id: Long
 }
 
 'deletePerson_deletesAssociatedPersonToStaffOrg

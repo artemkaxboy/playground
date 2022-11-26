@@ -6,6 +6,7 @@ import com.artemkaxboy.playground.gov.dumagovru.dto.FractionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntCommissionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntGroupDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.PersonDto
+import com.artemkaxboy.playground.gov.dumagovru.dto.toEntities
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
@@ -92,7 +93,7 @@ class DbInitializer(
     }
 
     private fun saveCountries(countries: Collection<CountryDto>) {
-        countryRepository.saveAll(countries.map { it.toEntity() })
+        countryRepository.saveAll(countries.toEntities())
     }
 
     fun getFileText(filename: String): String { // TODO use stream
