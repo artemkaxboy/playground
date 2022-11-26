@@ -26,6 +26,9 @@ dependencies {
 
     // tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    // KotlinLogging
+    implementation("io.github.microutils:kotlin-logging:3.0.4")
 }
 
 allOpen {

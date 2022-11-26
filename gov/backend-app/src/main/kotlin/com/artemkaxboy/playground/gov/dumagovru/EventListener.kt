@@ -11,6 +11,5 @@ class EventListener(private val dbInitializer: DbInitializer) {
     fun onApplicationStartedEvent(event: ApplicationStartedEvent) {
         println("Application started")
         dbInitializer.init()
-        dbInitializer.test()
     }
 }
