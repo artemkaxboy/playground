@@ -1,11 +1,14 @@
 package com.artemkaxboy.playground.gov.dumagovru
 
 import com.artemkaxboy.playground.gov.dumagovru.dto.ApplicationDataDto
+import com.artemkaxboy.playground.gov.dumagovru.dto.CommissionDto
+import com.artemkaxboy.playground.gov.dumagovru.dto.ConvocationDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.CountryDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.FractionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntCommissionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntGroupDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.PersonDto
+import com.artemkaxboy.playground.gov.dumagovru.dto.RegionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.toEntities
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
@@ -47,11 +50,15 @@ class DbInitializer(
         val json = Json { ignoreUnknownKeys = true }
         val data = json.decodeFromString<ApplicationDataDto>(jsonString)
 
+        // todo save lastConvocation and version
         savePeople(extractPeople(data))
         saveFractions(extractFractions(data))
         saveIntGroups(extractIntGroups(data))
         saveIntCommissions(extractIntCommissions(data))
         saveCountries(extractCountries(data))
+        saveCommissions(extractCommissions(data))
+        saveRegions(extractRegions(data))
+        saveConvocations(extractConvocations(data))
 
         logger.info { "Database initialized" }
     }
@@ -76,6 +83,18 @@ class DbInitializer(
         return data.countries
     }
 
+    private fun extractCommissions(data: ApplicationDataDto): Set<CommissionDto> {
+        return data.commissions
+    }
+
+    private fun extractRegions(data: ApplicationDataDto): Set<RegionDto> {
+        return data.regions
+    }
+
+    private fun extractConvocations(data: ApplicationDataDto): Set<ConvocationDto> {
+        return data.convocations
+    }
+
     private fun savePeople(people: Collection<PersonDto>) {
         personRepository.saveAll(people.map { it.toEntity() })
     }
@@ -93,7 +112,23 @@ class DbInitializer(
     }
 
     private fun saveCountries(countries: Collection<CountryDto>) {
-        countryRepository.saveAll(countries.toEntities())
+        val entities = countries.toEntities()
+        countryRepository.saveAll(entities)
+    }
+
+    private fun saveCommissions(commissions: Collection<CommissionDto>) {
+        val entities = commissions.map { it.toEntity() }
+        commissionRepository.saveAll(entities)
+    }
+
+    private fun saveRegions(regions: Collection<RegionDto>) {
+        val entities = regions.map { it.toEntity() }
+        regionRepository.saveAll(entities)
+    }
+
+    private fun saveConvocations(convocations: Collection<ConvocationDto>) {
+        val entities = convocations.map { it.toEntity() }
+        convocationRepository.saveAll(entities)
     }
 
     fun getFileText(filename: String): String { // TODO use stream

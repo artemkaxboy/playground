@@ -1,5 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
+import com.artemkaxboy.playground.gov.dumagovru.entity.Convocation
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,4 +14,11 @@ data class ConvocationDto(
 
     @SerialName("num_genitive")
     val numGenitive: String,
-)
+) {
+
+    fun toEntity() = Convocation(
+        id = id,
+        deputiesUrl = deputiesUrl.asUrl(DUMA_GOV_RU)?.asPrintable(),
+        numGenitive = numGenitive.asPrintable(),
+    )
+}
