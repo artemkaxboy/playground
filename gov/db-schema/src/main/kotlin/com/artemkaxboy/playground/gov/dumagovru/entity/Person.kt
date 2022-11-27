@@ -5,21 +5,24 @@ import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityHashCode
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
 import javax.persistence.CascadeType
 import javax.persistence.Column
-import javax.persistence.ConstraintMode
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.ForeignKey
 import javax.persistence.Id
 import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
+
+const val NO_ID = -1L
 
 @Entity
 data class Person(
 
     @Id
     @Column(nullable = false)
-    val id: Long? = null,
+    val id: Long = NO_ID,
 
     @Column(columnDefinition = "TEXT", name = "first_name", nullable = false)
     val firstName: String = "",
@@ -57,6 +60,13 @@ data class Person(
 
     @OneToMany(mappedBy = "person", cascade = [CascadeType.MERGE], fetch = FetchType.LAZY)
     val commissionPositions: MutableSet<CommissionPosition> = mutableSetOf(),
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "int_group_position_to_person",
+        inverseJoinColumns = [JoinColumn(name = "int_group_position_id")]
+    )
+    var intGroupPositions: MutableSet<IntGroupPosition> = mutableSetOf(),
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }

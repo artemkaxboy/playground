@@ -5,6 +5,7 @@ import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityHashCode
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -13,6 +14,7 @@ import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.JoinTable
 import javax.persistence.ManyToMany
+import javax.persistence.OneToMany
 
 @Entity
 data class IntGroup(
@@ -40,6 +42,9 @@ data class IntGroup(
         )]
     )
     val countries: MutableSet<Country> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "intGroup", cascade = [CascadeType.MERGE])
+    val intGroupPositions: MutableSet<IntGroupPosition> = mutableSetOf(),
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }

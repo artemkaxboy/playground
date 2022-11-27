@@ -23,11 +23,12 @@ data class IntGroupDto(
     val urlWebsite: String,
 ) {
 
-    fun toEntity() = IntGroup(
+    fun toEntity(): IntGroup = IntGroup(
         id = id,
         lead = lead.asPrintable(),
         title = title.asPrintable(),
         urlWebsite = urlWebsite.asPrintable(),
         countries = countries.map { Country(id = it) }.toMutableSet(),
+        intGroupPositions = positions.map { it.toEntity(id) }.toMutableSet(),
     )
 }

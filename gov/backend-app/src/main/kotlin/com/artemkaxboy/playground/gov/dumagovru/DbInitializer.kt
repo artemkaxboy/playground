@@ -10,6 +10,8 @@ import com.artemkaxboy.playground.gov.dumagovru.dto.IntGroupDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.PersonDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.RegionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.toEntities
+import com.artemkaxboy.playground.gov.dumagovru.entity.IntGroup
+import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
@@ -53,9 +55,15 @@ class DbInitializer(
         // todo save lastConvocation and version
         saveCommissions(extractCommissions(data)) // need: nothing
         saveFractions(extractFractions(data)) // need: nothing
-        savePeople(extractPeople(data)) // need: commission fraction, inner: staffOrg
+
+        val peopleEntities = convertPeople(extractPeople(data))
+        savePeople(peopleEntities) // need: commission fraction, inner: staffOrg
+
         saveCountries(extractCountries(data)) // need: nothing
-        saveIntGroups(extractIntGroups(data)) // need: countries
+
+        val intGroupEntities = convertIntGroups(extractIntGroups(data), peopleEntities)
+        saveIntGroups(intGroupEntities) // need: countries
+
         saveIntCommissions(extractIntCommissions(data))
         saveRegions(extractRegions(data))
         saveConvocations(extractConvocations(data))
@@ -63,16 +71,46 @@ class DbInitializer(
         logger.info { "Database initialized" }
     }
 
-    private fun extractPeople(data: ApplicationDataDto): Set<PersonDto> {
-        return data.persons
+    private fun extractPeople(data: ApplicationDataDto): Sequence<PersonDto> {
+        return data.persons.asSequence()
+    }
+
+    private fun convertPeople(peopleDtos: Sequence<PersonDto>): Sequence<Person> {
+        return peopleDtos.map { it.toEntity() }
+    }
+
+    private fun savePeople(people: Sequence<Person>) {
+        personRepository.saveAll(people.asIterable())
     }
 
     private fun extractFractions(data: ApplicationDataDto): List<FractionDto> {
         return data.fractions.filter { it.type == "fraction" }
     }
 
-    private fun extractIntGroups(data: ApplicationDataDto): Set<IntGroupDto> {
-        return data.intGroups
+    private fun extractIntGroups(data: ApplicationDataDto): Sequence<IntGroupDto> {
+        return data.intGroups.asSequence()
+    }
+
+    private fun convertIntGroups(
+        intGroups: Sequence<IntGroupDto>,
+        knownPeople: Sequence<Person>,
+    ): Sequence<IntGroup> {
+
+        val peopleMap = knownPeople.associateBy { it.id }
+        val peopleByOriginalIdMap = knownPeople.associateBy { it.originalAisPersonId }
+
+        return intGroups.map { it.toEntity() } //99110936 //99111895
+            .onEach { intGroup ->
+                intGroup.intGroupPositions.onEach { pos ->
+                    pos.people = pos.people
+                        .mapNotNull { peopleMap[it.id] ?: peopleByOriginalIdMap[it.id] }
+                        .toMutableSet()
+                }
+            }
+    }
+
+    private fun saveIntGroups(intGroups: Sequence<IntGroup>) {
+        intGroupRepository.saveAll(intGroups.asIterable())
     }
 
     private fun extractIntCommissions(data: ApplicationDataDto): Set<IntCommissionDto> {
@@ -95,18 +133,8 @@ class DbInitializer(
         return data.convocations
     }
 
-    private fun savePeople(people: Collection<PersonDto>) {
-        val entities = people.map { it.toEntity() }
-        personRepository.saveAll(entities)
-    }
-
     private fun saveFractions(fractions: Collection<FractionDto>) {
         fractionRepository.saveAll(fractions.map { it.toEntity() })
-    }
-
-    private fun saveIntGroups(intGroups: Collection<IntGroupDto>) {
-        val entities = intGroups.map { it.toEntity() }
-        intGroupRepository.saveAll(entities)
     }
 
     private fun saveIntCommissions(intCommissions: Collection<IntCommissionDto>) {
