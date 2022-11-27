@@ -1,5 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
+import com.artemkaxboy.playground.gov.dumagovru.entity.Country
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntGroup
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -27,5 +28,6 @@ data class IntGroupDto(
         lead = lead.asPrintable(),
         title = title.asPrintable(),
         urlWebsite = urlWebsite.asPrintable(),
+        countries = countries.map { Country(id = it) }.toMutableSet(),
     )
 }

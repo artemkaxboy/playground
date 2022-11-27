@@ -51,12 +51,12 @@ class DbInitializer(
         val data = json.decodeFromString<ApplicationDataDto>(jsonString)
 
         // todo save lastConvocation and version
-        saveCommissions(extractCommissions(data)) // needs: nothing
-        saveFractions(extractFractions(data)) // needs: nothing
+        saveCommissions(extractCommissions(data)) // need: nothing
+        saveFractions(extractFractions(data)) // need: nothing
         savePeople(extractPeople(data)) // need: commission fraction, inner: staffOrg
-        saveIntGroups(extractIntGroups(data))
+        saveCountries(extractCountries(data)) // need: nothing
+        saveIntGroups(extractIntGroups(data)) // need: countries
         saveIntCommissions(extractIntCommissions(data))
-        saveCountries(extractCountries(data))
         saveRegions(extractRegions(data))
         saveConvocations(extractConvocations(data))
 
@@ -105,7 +105,8 @@ class DbInitializer(
     }
 
     private fun saveIntGroups(intGroups: Collection<IntGroupDto>) {
-        intGroupRepository.saveAll(intGroups.map { it.toEntity() })
+        val entities = intGroups.map { it.toEntity() }
+        intGroupRepository.saveAll(entities)
     }
 
     private fun saveIntCommissions(intCommissions: Collection<IntCommissionDto>) {

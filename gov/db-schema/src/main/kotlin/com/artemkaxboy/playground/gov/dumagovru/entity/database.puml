@@ -149,15 +149,15 @@ class int_group {
    url_website: String?
 }
 
-class country_to_int_group {
+class int_group_to_country {
    (PK, FK) country_id: String
    (PK, FK) int_group_id: Long
 }
 
 'deleteCountry_deletesAssociatedCountryToIntGroup
-country               "1" -[#000000,plain]-> "0..*"  country_to_int_group
+country               "1" -[#000000,plain]-> "0..*"  int_group_to_country
 'deleteIntGroup_deletesAssociatedCountryToIntGroup
-int_group             "1" -[#000000,plain]-> "0..*"  country_to_int_group
+int_group             "1" -[#000000,plain]-> "0..*"  int_group_to_country
 
 class int_group_position {
    (PK) id: Long
