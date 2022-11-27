@@ -96,7 +96,8 @@ class DbInitializer(
     }
 
     private fun savePeople(people: Collection<PersonDto>) {
-        personRepository.saveAll(people.map { it.toEntity() })
+        val entities = people.map { it.toEntity() }
+        personRepository.saveAll(entities)
     }
 
     private fun saveFractions(fractions: Collection<FractionDto>) {

@@ -6,27 +6,26 @@ import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
-import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
-import javax.persistence.OneToOne
+import javax.persistence.ManyToOne
 
 @Entity
 @IdClass(CommissionPosition.IdClass::class)
 data class CommissionPosition(
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "person_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "commission_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val commission: Commission? = null,

@@ -1,5 +1,8 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
+import com.artemkaxboy.playground.gov.dumagovru.entity.CommissionPosition
+import com.artemkaxboy.playground.gov.dumagovru.entity.makeCommission
+import com.artemkaxboy.playground.gov.dumagovru.entity.makePerson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,4 +21,14 @@ data class CommissionPositionDto(
     val regions: List<String>,
 
     val org: Long,
-)
+) {
+
+    fun toEntity(
+        personId: Long,
+    ) = CommissionPosition(
+        person = makePerson(personId),
+        commission = makeCommission(org),
+        positionText = positionText.asPrintable(),
+        positionType = positionType?.asPrintable(),
+    )
+}

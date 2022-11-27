@@ -5,11 +5,14 @@ import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityHashCode
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
 import javax.persistence.CascadeType
 import javax.persistence.Column
+import javax.persistence.ConstraintMode
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.ForeignKey
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.OneToMany
 
 @Entity
 data class Person(
@@ -42,7 +45,7 @@ data class Person(
     @Column(columnDefinition = "TEXT")
     val url: String? = null,
 
-    // todo add staff, fraction, commission
+    // todo add staff, fraction, commissionposition
     @ManyToOne(cascade = [CascadeType.MERGE])
     @JoinColumn(
         name = "staff_org_id",
@@ -50,7 +53,10 @@ data class Person(
             foreignKeyDefinition = "foreign key (staff_org_id) references staff_org on delete set null"
         )
     )
-    var staffOrg: StaffOrg? = null,
+    val staffOrg: StaffOrg? = null,
+
+    @OneToMany(mappedBy = "person", cascade = [CascadeType.MERGE], fetch = FetchType.LAZY)
+    val commissionPositions: MutableSet<CommissionPosition> = mutableSetOf(),
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }
