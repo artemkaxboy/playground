@@ -3,6 +3,8 @@ package com.artemkaxboy.playground.gov.dumagovru.entity
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityEquals
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityHashCode
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -61,12 +63,13 @@ data class Person(
     @OneToMany(mappedBy = "person", cascade = [CascadeType.MERGE], fetch = FetchType.LAZY)
     val commissionPositions: MutableSet<CommissionPosition> = mutableSetOf(),
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "int_group_position_to_person",
-        inverseJoinColumns = [JoinColumn(name = "int_group_position_id")]
-    )
+    @ManyToMany(mappedBy = "people", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var intGroupPositions: MutableSet<IntGroupPosition> = mutableSetOf(),
+
+    @ManyToMany(mappedBy = "people", fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    var intCommissionPositions: MutableSet<IntCommissionPosition> = mutableSetOf(),
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }

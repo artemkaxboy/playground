@@ -3,9 +3,18 @@ package com.artemkaxboy.playground.gov.dumagovru.entity
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityEquals
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityHashCode
 import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.ForeignKey
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
+import javax.persistence.OneToMany
 
 @Entity
 data class IntCommission(
@@ -22,6 +31,21 @@ data class IntCommission(
 
     @Column(name = "url_website", columnDefinition = "TEXT")
     val urlWebsite: String? = null,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinTable(
+        name = "int_commission_to_country",
+        inverseJoinColumns = [JoinColumn(
+            name = "country_id",
+            foreignKey = ForeignKey(foreignKeyDefinition = "foreign key (country_id) references country on delete cascade")
+        )]
+    )
+    val countries: MutableSet<Country> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "intCommission", fetch = FetchType.LAZY, cascade = [CascadeType.MERGE])
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    val intCommissionPositions: MutableSet<IntCommissionPosition> = mutableSetOf(),
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }

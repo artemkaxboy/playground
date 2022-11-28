@@ -33,9 +33,9 @@ data class IntGroupPosition(
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "int_group_position_to_person",
-        inverseJoinColumns = [JoinColumn(
-            name = "person_id",
-            foreignKey = ForeignKey(foreignKeyDefinition = "foreign key (person_id) references person on delete cascade")
+        joinColumns = [JoinColumn(
+            name = "int_group_position_id",
+            foreignKey = ForeignKey(foreignKeyDefinition = "foreign key (int_group_position_id) references int_group_position on delete cascade")
         )]
     )
     var people: MutableSet<Person> = mutableSetOf(),

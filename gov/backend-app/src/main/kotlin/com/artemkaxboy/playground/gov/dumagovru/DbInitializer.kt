@@ -9,7 +9,10 @@ import com.artemkaxboy.playground.gov.dumagovru.dto.IntCommissionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntGroupDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.PersonDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.RegionDto
-import com.artemkaxboy.playground.gov.dumagovru.dto.toEntities
+import com.artemkaxboy.playground.gov.dumagovru.entity.Commission
+import com.artemkaxboy.playground.gov.dumagovru.entity.Country
+import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
+import com.artemkaxboy.playground.gov.dumagovru.entity.IntCommission
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntGroup
 import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
@@ -53,18 +56,19 @@ class DbInitializer(
         val data = json.decodeFromString<ApplicationDataDto>(jsonString)
 
         // todo save lastConvocation and version
-        saveCommissions(extractCommissions(data)) // need: nothing
-        saveFractions(extractFractions(data)) // need: nothing
+        saveCommissions(convertCommissions(extractCommissions(data))) // need: nothing
+        saveFractions(convertFractions(extractFractions(data))) // need: nothing
 
         val peopleEntities = convertPeople(extractPeople(data))
         savePeople(peopleEntities) // need: commission fraction, inner: staffOrg
 
-        saveCountries(extractCountries(data)) // need: nothing
+        saveCountries(convertCountries(extractCountries(data))) // need: nothing
 
         val intGroupEntities = convertIntGroups(extractIntGroups(data), peopleEntities)
         saveIntGroups(intGroupEntities) // need: countries
 
-        saveIntCommissions(extractIntCommissions(data))
+        val intCommissionEntities = convertIntCommissions(extractIntCommissions(data), peopleEntities)
+        saveIntCommissions(intCommissionEntities)
         saveRegions(extractRegions(data))
         saveConvocations(extractConvocations(data))
 
@@ -83,10 +87,6 @@ class DbInitializer(
         personRepository.saveAll(people.asIterable())
     }
 
-    private fun extractFractions(data: ApplicationDataDto): List<FractionDto> {
-        return data.fractions.filter { it.type == "fraction" }
-    }
-
     private fun extractIntGroups(data: ApplicationDataDto): Sequence<IntGroupDto> {
         return data.intGroups.asSequence()
     }
@@ -99,7 +99,7 @@ class DbInitializer(
         val peopleMap = knownPeople.associateBy { it.id }
         val peopleByOriginalIdMap = knownPeople.associateBy { it.originalAisPersonId }
 
-        return intGroups.map { it.toEntity() } //99110936 //99111895
+        return intGroups.map { it.toEntity() }
             .onEach { intGroup ->
                 intGroup.intGroupPositions.onEach { pos ->
                     pos.people = pos.people
@@ -113,18 +113,6 @@ class DbInitializer(
         intGroupRepository.saveAll(intGroups.asIterable())
     }
 
-    private fun extractIntCommissions(data: ApplicationDataDto): Set<IntCommissionDto> {
-        return data.intCommissions
-    }
-
-    private fun extractCountries(data: ApplicationDataDto): Set<CountryDto> {
-        return data.countries
-    }
-
-    private fun extractCommissions(data: ApplicationDataDto): Set<CommissionDto> {
-        return data.commissions
-    }
-
     private fun extractRegions(data: ApplicationDataDto): Set<RegionDto> {
         return data.regions
     }
@@ -133,22 +121,67 @@ class DbInitializer(
         return data.convocations
     }
 
-    private fun saveFractions(fractions: Collection<FractionDto>) {
-        fractionRepository.saveAll(fractions.map { it.toEntity() })
+    private fun extractFractions(data: ApplicationDataDto): Sequence<FractionDto> {
+        return data.fractions.asSequence().filter { it.type == "fraction" }
     }
 
-    private fun saveIntCommissions(intCommissions: Collection<IntCommissionDto>) {
-        intCommissionRepository.saveAll(intCommissions.map { it.toEntity() })
+    private fun convertFractions(fractions: Sequence<FractionDto>): Sequence<Fraction> {
+        return fractions.map { it.toEntity() }
     }
 
-    private fun saveCountries(countries: Collection<CountryDto>) {
-        val entities = countries.toEntities()
-        countryRepository.saveAll(entities)
+    private fun saveFractions(fractions: Sequence<Fraction>) {
+        fractionRepository.saveAll(fractions.asIterable())
     }
 
-    private fun saveCommissions(commissions: Collection<CommissionDto>) {
-        val entities = commissions.map { it.toEntity() }
-        commissionRepository.saveAll(entities)
+    private fun extractIntCommissions(data: ApplicationDataDto): Sequence<IntCommissionDto> {
+        return data.intCommissions.asSequence()
+    }
+
+    private fun convertIntCommissions(
+        intCommissions: Sequence<IntCommissionDto>,
+        knownPeople: Sequence<Person>
+    ): Sequence<IntCommission> {
+        val peopleMap = knownPeople.associateBy { it.id }
+        val peopleByOriginalIdMap = knownPeople.associateBy { it.originalAisPersonId }
+
+//        return intGroups.map { it.toEntity() } //99110936 //99111895
+//            .onEach { intGroup ->
+//                intGroup.intGroupPositions.onEach { pos ->
+//                    pos.people = pos.people
+//                        .mapNotNull { peopleMap[it.id] ?: peopleByOriginalIdMap[it.id] }
+//                        .toMutableSet()
+//                }
+//            }
+
+        return intCommissions.map { it.toEntity() }
+    }
+
+    private fun saveIntCommissions(entities: Sequence<IntCommission>) {
+        intCommissionRepository.saveAll(entities.asIterable())
+    }
+
+    private fun extractCountries(data: ApplicationDataDto): Sequence<CountryDto> {
+        return data.countries.asSequence()
+    }
+
+    private fun convertCountries(countries: Sequence<CountryDto>): Sequence<Country> {
+        return countries.map { it.toEntity() }
+    }
+
+    private fun saveCountries(entities: Sequence<Country>) {
+        countryRepository.saveAll(entities.asIterable())
+    }
+
+    private fun extractCommissions(data: ApplicationDataDto): Sequence<CommissionDto> {
+        return data.commissions.asSequence()
+    }
+
+    private fun convertCommissions(commissions: Sequence<CommissionDto>): Sequence<Commission> {
+        return commissions.map { it.toEntity() }
+    }
+
+    private fun saveCommissions(entities: Sequence<Commission>) {
+        commissionRepository.saveAll(entities.asIterable())
     }
 
     private fun saveRegions(regions: Collection<RegionDto>) {

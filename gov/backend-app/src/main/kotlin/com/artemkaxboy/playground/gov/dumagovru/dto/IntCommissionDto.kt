@@ -1,5 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
+import com.artemkaxboy.playground.gov.dumagovru.entity.Country
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntCommission
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -27,5 +28,7 @@ data class IntCommissionDto(
         urlWebsite = urlWebsite.asPrintable(),
         lead = lead.asPrintable(),
         title = title.asPrintable(),
+        countries = countries.map { Country(it) }.toMutableSet(),
+        intCommissionPositions = positions.map { it.toEntity(id) }.toMutableSet(),
     )
 }
