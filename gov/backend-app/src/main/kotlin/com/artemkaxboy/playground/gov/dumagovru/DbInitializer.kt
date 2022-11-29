@@ -15,6 +15,7 @@ import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntCommission
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntGroup
 import com.artemkaxboy.playground.gov.dumagovru.entity.Person
+import com.artemkaxboy.playground.gov.dumagovru.entity.Region
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
@@ -69,7 +70,8 @@ class DbInitializer(
 
         val intCommissionEntities = convertIntCommissions(extractIntCommissions(data), peopleEntities)
         saveIntCommissions(intCommissionEntities)
-        saveRegions(extractRegions(data))
+
+        saveRegions(convertRegions(extractRegions(data)))
         saveConvocations(extractConvocations(data))
 
         logger.info { "Database initialized" }
@@ -111,10 +113,6 @@ class DbInitializer(
 
     private fun saveIntGroups(intGroups: Sequence<IntGroup>) {
         intGroupRepository.saveAll(intGroups.asIterable())
-    }
-
-    private fun extractRegions(data: ApplicationDataDto): Set<RegionDto> {
-        return data.regions
     }
 
     private fun extractConvocations(data: ApplicationDataDto): Set<ConvocationDto> {
@@ -184,9 +182,16 @@ class DbInitializer(
         commissionRepository.saveAll(entities.asIterable())
     }
 
-    private fun saveRegions(regions: Collection<RegionDto>) {
-        val entities = regions.map { it.toEntity() }
-        regionRepository.saveAll(entities)
+    private fun extractRegions(data: ApplicationDataDto): Sequence<RegionDto> {
+        return data.regions.asSequence()
+    }
+
+    private fun convertRegions(regions: Sequence<RegionDto>): Sequence<Region> {
+        return regions.map { it.toEntity() }
+    }
+
+    private fun saveRegions(entities: Sequence<Region>) {
+        regionRepository.saveAll(entities.asIterable())
     }
 
     private fun saveConvocations(convocations: Collection<ConvocationDto>) {
