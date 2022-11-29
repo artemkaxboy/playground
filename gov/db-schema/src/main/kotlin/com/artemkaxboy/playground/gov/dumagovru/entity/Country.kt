@@ -29,7 +29,7 @@ data class Country(
     val url: String? = null,
 
     @ManyToMany(
-        cascade = [/*CascadeType.DETACH,*/ /*CascadeType.PERSIST,*/ CascadeType.MERGE /*CascadeType.REFRESH*/],
+        cascade = [/*CascadeType.DETACH*/ /*CascadeType.PERSIST*/ CascadeType.MERGE /*CascadeType.REFRESH*/],
         fetch = FetchType.LAZY
     )
     @OnDelete(action = OnDeleteAction.CASCADE)

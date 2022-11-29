@@ -15,22 +15,25 @@ data class CountryDto(
     val associated: Set<String>?,
 ) {
 
-    fun toEntity() = Country(
+    private fun toEntity() = Country(
         id = id,
         title = title.asPrintable(),
         url = url?.asUrl(DUMA_GOV_RU)?.asPrintable(),
     )
-}
 
-fun Collection<CountryDto>.toEntities(): List<Country> {
+    companion object {
 
-    val entitiesWithEmptyAssociation = map { it.toEntity() }.associateBy { it.id!! }
+        // it uses private fun toEntity()
+        fun Sequence<CountryDto>.toEntities(): Sequence<Country> {
 
-    return mapNotNull { dto ->
-        entitiesWithEmptyAssociation[dto.id]?.apply {
-            dto.associated
-                ?.mapNotNull { entitiesWithEmptyAssociation[it] }
-                ?.let { associatedCountries.addAll(it) }
+            val entitiesWithEmptyAssociation = map { it.toEntity() }.associateBy { it.id!! }
+
+            return map { dto -> dto.id to (dto.associated ?: emptySet()) }
+                .mapNotNull { (id, associatedSet) ->
+                    val entity = entitiesWithEmptyAssociation[id]
+                    entity?.associatedCountries?.addAll(associatedSet.mapNotNull { entitiesWithEmptyAssociation[it] })
+                    entity
+                }
         }
     }
 }

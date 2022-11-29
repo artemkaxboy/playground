@@ -4,12 +4,14 @@ import com.artemkaxboy.playground.gov.dumagovru.dto.ApplicationDataDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.CommissionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.ConvocationDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.CountryDto
+import com.artemkaxboy.playground.gov.dumagovru.dto.CountryDto.Companion.toEntities
 import com.artemkaxboy.playground.gov.dumagovru.dto.FractionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntCommissionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntGroupDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.PersonDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.RegionDto
 import com.artemkaxboy.playground.gov.dumagovru.entity.Commission
+import com.artemkaxboy.playground.gov.dumagovru.entity.Convocation
 import com.artemkaxboy.playground.gov.dumagovru.entity.Country
 import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntCommission
@@ -68,11 +70,11 @@ class DbInitializer(
         val intGroupEntities = convertIntGroups(extractIntGroups(data), peopleEntities)
         saveIntGroups(intGroupEntities) // need: countries
 
-        val intCommissionEntities = convertIntCommissions(extractIntCommissions(data), peopleEntities)
+        val intCommissionEntities = convertIntCommissions(extractIntCommissions(data))
         saveIntCommissions(intCommissionEntities)
 
         saveRegions(convertRegions(extractRegions(data)))
-        saveConvocations(extractConvocations(data))
+        saveConvocations(convertConvocations(extractConvocations(data)))
 
         logger.info { "Database initialized" }
     }
@@ -115,8 +117,16 @@ class DbInitializer(
         intGroupRepository.saveAll(intGroups.asIterable())
     }
 
-    private fun extractConvocations(data: ApplicationDataDto): Set<ConvocationDto> {
-        return data.convocations
+    private fun extractConvocations(data: ApplicationDataDto): Sequence<ConvocationDto> {
+        return data.convocations.asSequence()
+    }
+
+    private fun convertConvocations(convocations: Sequence<ConvocationDto>): Sequence<Convocation> {
+        return convocations.map { it.toEntity() }
+    }
+
+    private fun saveConvocations(convocations: Sequence<Convocation>) {
+        convocationRepository.saveAll(convocations.asIterable())
     }
 
     private fun extractFractions(data: ApplicationDataDto): Sequence<FractionDto> {
@@ -136,21 +146,8 @@ class DbInitializer(
     }
 
     private fun convertIntCommissions(
-        intCommissions: Sequence<IntCommissionDto>,
-        knownPeople: Sequence<Person>
+        intCommissions: Sequence<IntCommissionDto>
     ): Sequence<IntCommission> {
-        val peopleMap = knownPeople.associateBy { it.id }
-        val peopleByOriginalIdMap = knownPeople.associateBy { it.originalAisPersonId }
-
-//        return intGroups.map { it.toEntity() } //99110936 //99111895
-//            .onEach { intGroup ->
-//                intGroup.intGroupPositions.onEach { pos ->
-//                    pos.people = pos.people
-//                        .mapNotNull { peopleMap[it.id] ?: peopleByOriginalIdMap[it.id] }
-//                        .toMutableSet()
-//                }
-//            }
-
         return intCommissions.map { it.toEntity() }
     }
 
@@ -163,7 +160,7 @@ class DbInitializer(
     }
 
     private fun convertCountries(countries: Sequence<CountryDto>): Sequence<Country> {
-        return countries.map { it.toEntity() }
+        return countries.toEntities()
     }
 
     private fun saveCountries(entities: Sequence<Country>) {
@@ -192,11 +189,6 @@ class DbInitializer(
 
     private fun saveRegions(entities: Sequence<Region>) {
         regionRepository.saveAll(entities.asIterable())
-    }
-
-    private fun saveConvocations(convocations: Collection<ConvocationDto>) {
-        val entities = convocations.map { it.toEntity() }
-        convocationRepository.saveAll(entities)
     }
 
     fun getFileText(filename: String): String { // TODO use stream
