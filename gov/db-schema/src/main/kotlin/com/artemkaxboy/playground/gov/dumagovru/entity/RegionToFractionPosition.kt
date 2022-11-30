@@ -37,7 +37,7 @@ data class RegionToFractionPosition(
 
     @Id
     @Column(name = "convocation_id", insertable = false, updatable = false)
-    val convocationId: Long? = fractionPosition?.convocation?.id,
+    val convocationId: Int? = fractionPosition?.convocation?.id,
 
     @Id
     @Column(name = "fraction_id", insertable = false, updatable = false)
@@ -54,7 +54,7 @@ data class RegionToFractionPosition(
 
     data class IdClass(
         val region: String? = null,
-        val convocationId: Long? = null,
+        val convocationId: Int? = null,
         val fractionId: Long? = null,
         val personId: Long? = null,
     ) : Serializable

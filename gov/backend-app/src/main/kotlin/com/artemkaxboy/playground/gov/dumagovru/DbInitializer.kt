@@ -60,10 +60,12 @@ class DbInitializer(
 
         // todo save lastConvocation and version
         saveCommissions(convertCommissions(extractCommissions(data))) // need: nothing
-        saveFractions(convertFractions(extractFractions(data))) // need: nothing
+        val fractions = convertFractions(extractFractions(data)) // need: nothing
+        saveFractions(fractions)
+        saveConvocations(convertConvocations(extractConvocations(data))) // need: fraction
 
-        val peopleEntities = convertPeople(extractPeople(data))
-        savePeople(peopleEntities) // need: commission fraction, inner: staffOrg
+        val peopleEntities = removeUnknownFractionPositions(convertPeople(extractPeople(data)), fractions)
+        savePeople(peopleEntities) // need: commission fraction convocation, inner: staffOrg
 
         saveCountries(convertCountries(extractCountries(data))) // need: nothing
 
@@ -74,7 +76,6 @@ class DbInitializer(
         saveIntCommissions(intCommissionEntities)
 
         saveRegions(convertRegions(extractRegions(data)))
-        saveConvocations(convertConvocations(extractConvocations(data)))
 
         logger.info { "Database initialized" }
     }
@@ -85,6 +86,18 @@ class DbInitializer(
 
     private fun convertPeople(peopleDtos: Sequence<PersonDto>): Sequence<Person> {
         return peopleDtos.map { it.toEntity() }
+    }
+
+    private fun removeUnknownFractionPositions(
+        peopleEntities: Sequence<Person>,
+        fractions: Sequence<Fraction>
+    ): Sequence<Person> {
+        val fractionIds = fractions.mapNotNull { it.id }.toSet() // Unable to find 72100025
+        return peopleEntities.onEach { person ->
+            person.fractionPositions.removeIf { fractionPosition ->
+                fractionIds.contains(fractionPosition.fraction?.id).not()
+            }
+        }
     }
 
     private fun savePeople(people: Sequence<Person>) {
@@ -130,7 +143,7 @@ class DbInitializer(
     }
 
     private fun extractFractions(data: ApplicationDataDto): Sequence<FractionDto> {
-        return data.fractions.asSequence().filter { it.type == "fraction" }
+        return data.fractions.asSequence()
     }
 
     private fun convertFractions(fractions: Sequence<FractionDto>): Sequence<Fraction> {

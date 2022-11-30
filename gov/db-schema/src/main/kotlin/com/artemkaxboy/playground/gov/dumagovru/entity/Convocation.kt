@@ -12,13 +12,13 @@ data class Convocation(
 
     @Id
     @Column(name = "id", nullable = false)
-    val id: Long? = null,
+    val id: Int? = null,
 
     @Column(name = "num_genitive", columnDefinition = "TEXT", nullable = false)
     val numGenitive: String = "",
 
     @Column(name = "deputies_url", columnDefinition = "TEXT")
-    val deputiesUrl: String?,
+    val deputiesUrl: String? = null,
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }
@@ -27,7 +27,7 @@ data class Convocation(
 }
 
 fun makeConvocation(
-    id: Long = 1L,
+    id: Int = 1,
     numGenitive: String = "numGenitive",
     deputiesUrl: String? = "https://deputiesUrl",
 ) = Convocation(

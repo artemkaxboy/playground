@@ -1,5 +1,9 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
+import com.artemkaxboy.playground.gov.dumagovru.entity.Convocation
+import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
+import com.artemkaxboy.playground.gov.dumagovru.entity.FractionPosition
+import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -26,4 +30,14 @@ data class FractionPositionDto(
     val org: Long,
 
     val convocation: Int,
-)
+) {
+
+    fun toEntity(personId: Long) = FractionPosition(
+        convocation = Convocation(convocation),
+        fraction = Fraction(org),
+        person = Person(personId),
+        actual = actual,
+        placeInHallColumn = placeInHallColumn,
+        placeInHallRow = placeInHallRow,
+    )
+}

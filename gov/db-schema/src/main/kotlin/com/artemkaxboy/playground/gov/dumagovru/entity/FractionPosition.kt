@@ -13,6 +13,7 @@ import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.OneToOne
 
 @Entity
@@ -20,21 +21,20 @@ import javax.persistence.OneToOne
 data class FractionPosition(
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "convocation_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val convocation: Convocation? = null,
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fraction_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     val fraction: Fraction? = null,
 
     @Id
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     val person: Person? = null,
 
     @Column(nullable = false)
@@ -52,7 +52,7 @@ data class FractionPosition(
     override fun toString() = entityToString { this }
 
     data class IdClass(
-        val convocation: Long? = null,
+        val convocation: Int? = null,
         val fraction: Long? = null,
         val person: Long? = null,
     ) : Serializable

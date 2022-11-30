@@ -65,11 +65,15 @@ data class Person(
 
     @ManyToMany(mappedBy = "people", fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var intGroupPositions: MutableSet<IntGroupPosition> = mutableSetOf(),
+    val intGroupPositions: MutableSet<IntGroupPosition> = mutableSetOf(),
 
     @ManyToMany(mappedBy = "people", fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    var intCommissionPositions: MutableSet<IntCommissionPosition> = mutableSetOf(),
+    val intCommissionPositions: MutableSet<IntCommissionPosition> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    val fractionPositions: MutableSet<FractionPosition> = mutableSetOf(),
 ) {
 
     override fun equals(other: Any?) = entityEquals { this to other }

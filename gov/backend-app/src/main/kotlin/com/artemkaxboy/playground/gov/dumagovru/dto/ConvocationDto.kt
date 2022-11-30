@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ConvocationDto(
 
-    val id: Long,
+    val id: Int,
 
     @SerialName("deputies_url")
     val deputiesUrl: String,

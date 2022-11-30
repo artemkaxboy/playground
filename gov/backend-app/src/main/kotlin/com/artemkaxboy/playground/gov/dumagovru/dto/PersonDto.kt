@@ -54,5 +54,6 @@ data class PersonDto(
         url = url.asUrl(DUMA_GOV_RU)?.asPrintable(),
         staffOrg = staffOrg?.toEntity(),
         commissionPositions = commissionPositions.map { it.toEntity(id) }.toMutableSet(),
+        fractionPositions = fractionPositions.map { it.toEntity(id) }.toMutableSet(),
     )
 }
