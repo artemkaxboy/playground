@@ -10,9 +10,12 @@ import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
+import javax.persistence.ForeignKey
 import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
 import javax.persistence.OneToOne
 
@@ -36,6 +39,23 @@ data class FractionPosition(
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "person_id", nullable = false)
     val person: Person? = null,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "fraction_position_to_region",
+        foreignKey = ForeignKey(
+            name = "fk_fraction_position_to_region", // creates without cascade if no name
+            foreignKeyDefinition = "FOREIGN KEY (person_id, fraction_id, convocation_id) " +
+                    "REFERENCES fraction_position(person_id, fraction_id, convocation_id) ON DELETE CASCADE"
+        ),
+        joinColumns = [
+            // without referencedColumnName order of arguments may be mixed
+            JoinColumn(name = "fraction_id", referencedColumnName = "fraction_id"),
+            JoinColumn(name = "person_id", referencedColumnName = "person_id"),
+            JoinColumn(name = "convocation_id", referencedColumnName = "convocation_id"),
+        ]
+    )
+    val regions: MutableSet<Region> = mutableSetOf(),
 
     @Column(nullable = false)
     val actual: Boolean = false,

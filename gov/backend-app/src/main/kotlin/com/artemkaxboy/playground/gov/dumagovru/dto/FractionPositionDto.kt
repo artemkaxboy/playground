@@ -4,6 +4,7 @@ import com.artemkaxboy.playground.gov.dumagovru.entity.Convocation
 import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
 import com.artemkaxboy.playground.gov.dumagovru.entity.FractionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.Person
+import com.artemkaxboy.playground.gov.dumagovru.entity.Region
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -39,5 +40,6 @@ data class FractionPositionDto(
         actual = actual,
         placeInHallColumn = placeInHallColumn,
         placeInHallRow = placeInHallRow,
+        regions = regions.map { Region(id = it) }.toMutableSet(),
     )
 }

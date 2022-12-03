@@ -59,7 +59,9 @@ class DbInitializer(
         val data = json.decodeFromString<ApplicationDataDto>(jsonString)
 
         // todo save lastConvocation and version
-        saveCommissions(convertCommissions(extractCommissions(data))) // need: nothing
+        saveRegions(convertRegions(extractRegions(data)))
+
+        saveCommissions(convertCommissions(extractCommissions(data))) // need: regions
         val fractions = convertFractions(extractFractions(data)) // need: nothing
         saveFractions(fractions)
         saveConvocations(convertConvocations(extractConvocations(data))) // need: fraction
@@ -74,8 +76,6 @@ class DbInitializer(
 
         val intCommissionEntities = convertIntCommissions(extractIntCommissions(data))
         saveIntCommissions(intCommissionEntities)
-
-        saveRegions(convertRegions(extractRegions(data)))
 
         logger.info { "Database initialized" }
     }
