@@ -1,7 +1,7 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
-import com.artemkaxboy.playground.gov.dumagovru.entity.Commission
 import com.artemkaxboy.playground.gov.dumagovru.entity.CommissionPosition
+import com.artemkaxboy.playground.gov.dumagovru.entity.Organisation
 import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import com.artemkaxboy.playground.gov.dumagovru.entity.Region
 import kotlinx.serialization.SerialName
@@ -31,7 +31,7 @@ data class CommissionPositionDto(
         personId: Long,
     ) = CommissionPosition(
         person = Person(id = personId),
-        commission = Commission(id = org),
+        commission = Organisation(id = org),
         positionText = positionText.asPrintable(),
         positionType = positionType?.asPrintable(),
         regions = regions.map { Region(id = it) }.toMutableSet(),

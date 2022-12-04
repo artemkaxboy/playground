@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 
-internal class RegionToFractionPositionTest : AbstractIntegrationTest() {
+internal class RegionToOrganisationPositionTest : AbstractIntegrationTest() {
 
     @Autowired
     private lateinit var fractionPositionRepository: FractionPositionRepository

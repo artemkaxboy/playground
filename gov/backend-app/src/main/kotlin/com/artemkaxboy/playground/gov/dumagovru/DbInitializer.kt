@@ -10,21 +10,20 @@ import com.artemkaxboy.playground.gov.dumagovru.dto.IntCommissionDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.IntGroupDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.PersonDto
 import com.artemkaxboy.playground.gov.dumagovru.dto.RegionDto
-import com.artemkaxboy.playground.gov.dumagovru.entity.Commission
+import com.artemkaxboy.playground.gov.dumagovru.dto.StaffOrgDto
 import com.artemkaxboy.playground.gov.dumagovru.entity.Convocation
 import com.artemkaxboy.playground.gov.dumagovru.entity.Country
-import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntCommission
 import com.artemkaxboy.playground.gov.dumagovru.entity.IntGroup
+import com.artemkaxboy.playground.gov.dumagovru.entity.Organisation
 import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import com.artemkaxboy.playground.gov.dumagovru.entity.Region
-import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionPositionRepository
-import com.artemkaxboy.playground.gov.dumagovru.repository.CommissionRepository
+import com.artemkaxboy.playground.gov.dumagovru.entity.merge
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.CountryRepository
-import com.artemkaxboy.playground.gov.dumagovru.repository.FractionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.IntCommissionRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.IntGroupRepository
+import com.artemkaxboy.playground.gov.dumagovru.repository.OrganisationRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.RegionRepository
 import kotlinx.serialization.decodeFromString
@@ -39,11 +38,9 @@ val logger = KotlinLogging.logger {}
 
 @Component
 class DbInitializer(
-    private val commissionRepository: CommissionRepository,
-    private val commissionPositionRepository: CommissionPositionRepository,
     private val convocationRepository: ConvocationRepository,
     private val countryRepository: CountryRepository,
-    private val fractionRepository: FractionRepository,
+    private val organisationRepository: OrganisationRepository,
     private val intGroupRepository: IntGroupRepository,
     private val personRepository: PersonRepository,
     private val intCommissionRepository: IntCommissionRepository,
@@ -61,17 +58,20 @@ class DbInitializer(
         // todo save lastConvocation and version
         saveRegions(convertRegions(extractRegions(data)))
 
-        saveCommissions(convertCommissions(extractCommissions(data))) // need: regions
+        val commissions = convertCommissions(extractCommissions(data))
         val fractions = convertFractions(extractFractions(data)) // need: nothing
-        saveFractions(fractions)
+        val staffOrgs = convertStaffOrgs(extractStaffOrgs(data))
+        val organisations = commissions.merge(fractions + staffOrgs)
+        saveOrganisations(organisations)
         saveConvocations(convertConvocations(extractConvocations(data))) // need: fraction
 
-        val peopleEntities = removeUnknownFractionPositions(convertPeople(extractPeople(data)), fractions)
-        savePeople(peopleEntities) // need: commission fraction convocation, inner: staffOrg
+        val people = convertPeople(extractPeople(data), organisations)
+//        val people = removeUnknownFractionPositions(convertPeople(extractPeople(data)), organisations)
+        savePeople(people) // need: commission fraction convocation, inner: staffOrg
 
         saveCountries(convertCountries(extractCountries(data))) // need: nothing
 
-        val intGroupEntities = convertIntGroups(extractIntGroups(data), peopleEntities)
+        val intGroupEntities = convertIntGroups(extractIntGroups(data), people)
         saveIntGroups(intGroupEntities) // need: countries
 
         val intCommissionEntities = convertIntCommissions(extractIntCommissions(data))
@@ -84,13 +84,20 @@ class DbInitializer(
         return data.persons.asSequence()
     }
 
-    private fun convertPeople(peopleDtos: Sequence<PersonDto>): Sequence<Person> {
-        return peopleDtos.map { it.toEntity() }
+    private fun convertPeople(
+        peopleDtos: Sequence<PersonDto>,
+        organisations: Sequence<Organisation>
+    ): Sequence<Person> {
+
+        val organisationMap = organisations.associateBy { it.id }
+        return peopleDtos.map { dto ->
+            dto.toEntity(organisationMap)
+        }
     }
 
     private fun removeUnknownFractionPositions(
         peopleEntities: Sequence<Person>,
-        fractions: Sequence<Fraction>
+        fractions: Sequence<Organisation>
     ): Sequence<Person> {
         val fractionIds = fractions.mapNotNull { it.id }.toSet() // Unable to find 72100025
         return peopleEntities.onEach { person ->
@@ -142,16 +149,27 @@ class DbInitializer(
         convocationRepository.saveAll(convocations.asIterable())
     }
 
-    private fun extractFractions(data: ApplicationDataDto): Sequence<FractionDto> {
-        return data.fractions.asSequence()
+    private fun extractStaffOrgs(data: ApplicationDataDto): Sequence<StaffOrgDto> {
+        return data.persons.asSequence().mapNotNull { it.staffOrg }
     }
 
-    private fun convertFractions(fractions: Sequence<FractionDto>): Sequence<Fraction> {
+    private fun convertStaffOrgs(staffOrgs: Sequence<StaffOrgDto>): Sequence<Organisation> {
+        return staffOrgs.map { it.toEntity() }
+    }
+
+    private fun extractFractions(data: ApplicationDataDto): Sequence<FractionDto> {
+        val fromPositions = data.persons.asSequence().flatMap { it.fractionPositions }
+            .map { FractionDto.minimal(it.org) }
+        val direct = data.fractions.asSequence()
+        return fromPositions + direct
+    }
+
+    private fun convertFractions(fractions: Sequence<FractionDto>): Sequence<Organisation> {
         return fractions.map { it.toEntity() }
     }
 
-    private fun saveFractions(fractions: Sequence<Fraction>) {
-        fractionRepository.saveAll(fractions.asIterable())
+    private fun saveOrganisations(entities: Sequence<Organisation>) {
+        organisationRepository.saveAll(entities.asIterable())
     }
 
     private fun extractIntCommissions(data: ApplicationDataDto): Sequence<IntCommissionDto> {
@@ -184,12 +202,12 @@ class DbInitializer(
         return data.commissions.asSequence()
     }
 
-    private fun convertCommissions(commissions: Sequence<CommissionDto>): Sequence<Commission> {
+    private fun convertCommissions(commissions: Sequence<CommissionDto>): Sequence<Organisation> {
         return commissions.map { it.toEntity() }
     }
 
-    private fun saveCommissions(entities: Sequence<Commission>) {
-        commissionRepository.saveAll(entities.asIterable())
+    private fun saveCommissions(entities: Sequence<Organisation>) {
+        organisationRepository.saveAll(entities.asIterable())
     }
 
     private fun extractRegions(data: ApplicationDataDto): Sequence<RegionDto> {

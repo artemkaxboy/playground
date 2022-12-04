@@ -50,15 +50,14 @@ data class Person(
     @Column(columnDefinition = "TEXT")
     val url: String? = null,
 
-    // todo add staff, fraction, commissionposition
     @ManyToOne(cascade = [CascadeType.MERGE])
     @JoinColumn(
         name = "staff_org_id",
         foreignKey = ForeignKey(
-            foreignKeyDefinition = "foreign key (staff_org_id) references staff_org on delete set null"
+            foreignKeyDefinition = "FOREIGN KEY (staff_org_id) REFERENCES organisation ON DELETE SET NULL"
         )
     )
-    val staffOrg: StaffOrg? = null,
+    val staffOrg: Organisation? = null,
 
     @OneToMany(mappedBy = "person", cascade = [CascadeType.MERGE], fetch = FetchType.LAZY)
     val commissionPositions: MutableSet<CommissionPosition> = mutableSetOf(),
@@ -91,7 +90,7 @@ fun makePerson(
     originalAisPersonId: Long? = 1L,
     photo: String? = "https://photo$id",
     url: String? = "https://url$id",
-    staffOrg: StaffOrg? = makeStaffOrg(),
+    staffOrg: Organisation? = makeOrganisation(),
 ): Person = Person(
     id = id,
     firstName = firstName,

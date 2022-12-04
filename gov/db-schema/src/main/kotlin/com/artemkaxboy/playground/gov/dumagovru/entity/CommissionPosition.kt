@@ -31,7 +31,7 @@ data class CommissionPosition(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "commission_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    val commission: Commission? = null,
+    val commission: Organisation? = null,
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -64,7 +64,7 @@ data class CommissionPosition(
 
 fun makeCommissionPosition(
     person: Person = makePerson(),
-    commission: Commission = makeCommission(),
+    commission: Organisation = makeOrganisation(),
     positionText: String = CommissionPosition::positionText.name,
     positionType: String? = CommissionPosition::positionType.name,
 ) = CommissionPosition(

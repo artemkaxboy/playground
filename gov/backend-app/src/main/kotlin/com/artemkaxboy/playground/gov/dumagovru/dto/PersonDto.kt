@@ -1,5 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
+import com.artemkaxboy.playground.gov.dumagovru.entity.Organisation
 import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -42,7 +43,7 @@ data class PersonDto(
     val staffPositions: Set<StaffPositionDto> = emptySet(),
 ) {
 
-    fun toEntity() = Person(
+    fun toEntity(organisations: Map<Long?, Organisation>) = Person(
         id = id,
         firstName = firstName.asPrintable(),
         secondName = secondName.asPrintable(),
@@ -52,7 +53,7 @@ data class PersonDto(
         lead = lead.asPrintable(),
         title = title.asPrintable(),
         url = url.asUrl(DUMA_GOV_RU)?.asPrintable(),
-        staffOrg = staffOrg?.toEntity(),
+        staffOrg = staffOrg?.org?.let { organisations[it] },
         commissionPositions = commissionPositions.map { it.toEntity(id) }.toMutableSet(),
         fractionPositions = fractionPositions.map { it.toEntity(id) }.toMutableSet(),
     )

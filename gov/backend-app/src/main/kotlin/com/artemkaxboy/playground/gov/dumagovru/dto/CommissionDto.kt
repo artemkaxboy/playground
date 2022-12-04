@@ -1,6 +1,6 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
-import com.artemkaxboy.playground.gov.dumagovru.entity.Commission
+import com.artemkaxboy.playground.gov.dumagovru.entity.Organisation
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,7 +22,7 @@ data class CommissionDto(
     val shortTitle: String?,
 ) {
 
-    fun toEntity() = Commission(
+    fun toEntity() = Organisation(
         id = id,
         title = title.asPrintable(),
         description = description.asPrintable(),

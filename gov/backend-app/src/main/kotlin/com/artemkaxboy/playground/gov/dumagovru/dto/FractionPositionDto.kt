@@ -1,7 +1,7 @@
 package com.artemkaxboy.playground.gov.dumagovru.dto
 
 import com.artemkaxboy.playground.gov.dumagovru.entity.Convocation
-import com.artemkaxboy.playground.gov.dumagovru.entity.Fraction
+import com.artemkaxboy.playground.gov.dumagovru.entity.Organisation
 import com.artemkaxboy.playground.gov.dumagovru.entity.FractionPosition
 import com.artemkaxboy.playground.gov.dumagovru.entity.Person
 import com.artemkaxboy.playground.gov.dumagovru.entity.Region
@@ -35,7 +35,7 @@ data class FractionPositionDto(
 
     fun toEntity(personId: Long) = FractionPosition(
         convocation = Convocation(convocation),
-        fraction = Fraction(org),
+        fraction = Organisation(org),
         person = Person(personId),
         actual = actual,
         placeInHallColumn = placeInHallColumn,

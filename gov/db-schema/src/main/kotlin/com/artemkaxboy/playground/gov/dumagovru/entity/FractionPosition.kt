@@ -6,7 +6,6 @@ import com.artemkaxboy.playground.gov.utils.JpaExtensions.entityToString
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
 import java.io.Serializable
-import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
@@ -17,7 +16,6 @@ import javax.persistence.JoinColumn
 import javax.persistence.JoinTable
 import javax.persistence.ManyToMany
 import javax.persistence.ManyToOne
-import javax.persistence.OneToOne
 
 @Entity
 @IdClass(FractionPosition.IdClass::class)
@@ -33,7 +31,7 @@ data class FractionPosition(
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fraction_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    val fraction: Fraction? = null,
+    val fraction: Organisation? = null,
 
     @Id
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -80,7 +78,7 @@ data class FractionPosition(
 
 fun makeFractionPosition(
     convocation: Convocation = makeConvocation(),
-    fraction: Fraction = makeFraction(),
+    fraction: Organisation = makeOrganisation(),
     person: Person = makePerson(),
     actual: Boolean = true,
     placeInHallColumn: Int? = 1,

@@ -8,7 +8,7 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Entity
-data class Fraction(
+data class Organisation(
 
     @Id
     @Column(nullable = false)
@@ -30,19 +30,34 @@ data class Fraction(
     val type: String? = null,
 ) {
 
+    fun merge(other: Organisation?): Organisation {
+        require(other == null || id == other.id) { "Can't merge organisations with different ids" }
+        return copy(
+            title = maxOf(title, other?.title, Comparator.comparingInt(::stringLengthOrNegative))!!,
+            shortTitle = maxOf(shortTitle, other?.shortTitle, Comparator.comparingInt(::stringLengthOrNegative)),
+            description = maxOf(description, other?.description, Comparator.comparingInt(::stringLengthOrNegative)),
+            urlWebsite = maxOf(urlWebsite, other?.urlWebsite, Comparator.comparingInt(::stringLengthOrNegative)),
+            type = maxOf(type, other?.type, Comparator.comparingInt(::stringLengthOrNegative)),
+        )
+    }
+
+    fun stringLengthOrNegative(string: String?): Int {
+        return string?.length ?: -1
+    }
+
     override fun equals(other: Any?) = entityEquals { this to other }
     override fun hashCode() = entityHashCode { this }
     override fun toString() = entityToString { this }
 }
 
-fun makeFraction(
+fun makeOrganisation(
     id: Long = 1L,
     title: String = "title",
     shortTitle: String? = "shortTitle",
     description: String? = "description",
     urlWebsite: String? = "https://urlWebsite",
     type: String? = "type",
-) = Fraction(
+) = Organisation(
     id = id,
     title = title,
     shortTitle = shortTitle,
@@ -50,3 +65,13 @@ fun makeFraction(
     urlWebsite = urlWebsite,
     type = type,
 )
+
+/**
+ * Combines two organisation sequences into one. Merges all known information about organisations.
+ */
+fun Sequence<Organisation>.merge(other: Sequence<Organisation>): Sequence<Organisation> {
+    return plus(other).groupBy { it.id }
+        .values
+        .asSequence()
+        .map { it.reduce { acc, organisation -> acc.merge(organisation) } }
+}

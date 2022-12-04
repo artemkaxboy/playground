@@ -3,7 +3,7 @@ package com.artemkaxboy.playground.it.gov.dumagovru.entity
 import com.artemkaxboy.playground.gov.dumagovru.entity.makeFractionPosition
 import com.artemkaxboy.playground.gov.dumagovru.repository.ConvocationRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.FractionPositionRepository
-import com.artemkaxboy.playground.gov.dumagovru.repository.FractionRepository
+import com.artemkaxboy.playground.gov.dumagovru.repository.OrganisationRepository
 import com.artemkaxboy.playground.gov.dumagovru.repository.PersonRepository
 import com.artemkaxboy.playground.it.AbstractIntegrationTest
 import org.assertj.core.api.Assertions
@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import javax.persistence.EntityManager
 
-internal class FractionPositionTest : AbstractIntegrationTest() {
+internal class OrganisationPositionTest : AbstractIntegrationTest() {
 
     @Autowired
-    private lateinit var fractionRepository: FractionRepository
+    private lateinit var organisationRepository: OrganisationRepository
 
     @Autowired
     private lateinit var convocationRepository: ConvocationRepository
@@ -38,14 +38,14 @@ internal class FractionPositionTest : AbstractIntegrationTest() {
         convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
-        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        organisationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM convocation WHERE id = ${expected.convocation?.id}")
             .executeUpdate()
         convocationRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
-        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        organisationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 
     @Test
@@ -54,14 +54,14 @@ internal class FractionPositionTest : AbstractIntegrationTest() {
         val expected = makeFractionPosition()
 
         fractionPositionRepository.save(expected)
-        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        organisationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM fraction WHERE id = ${expected.fraction?.id}")
             .executeUpdate()
-        fractionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
+        organisationRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
@@ -75,14 +75,14 @@ internal class FractionPositionTest : AbstractIntegrationTest() {
         fractionPositionRepository.save(expected)
         personRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
-        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        organisationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
 
         entityManager.createNativeQuery("DELETE FROM person WHERE id = ${expected.person?.id}")
             .executeUpdate()
         personRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
         fractionPositionRepository.findAll().let { Assertions.assertThat(it).isEmpty() }
-        fractionRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
+        organisationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
         convocationRepository.findAll().let { Assertions.assertThat(it).hasSize(1) }
     }
 
