@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p00
 
 private class Leet1 {
     fun twoSum(nums: IntArray, target: Int): IntArray {

@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p04
 
 import java.util.TreeMap
 

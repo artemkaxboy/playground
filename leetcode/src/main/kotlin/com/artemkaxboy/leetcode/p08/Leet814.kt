@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p08
 
 /**
  * Example:

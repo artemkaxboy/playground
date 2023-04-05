@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p00
 
 private class Leet11 {
     fun myAtoi(s: String): Int {

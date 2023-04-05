@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p00
 
 import java.util.concurrent.LinkedTransferQueue
 

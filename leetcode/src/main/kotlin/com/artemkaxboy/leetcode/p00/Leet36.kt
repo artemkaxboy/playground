@@ -1,4 +1,6 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p00
+
+import com.artemkaxboy.leetcode.LeetUtils
 
 private class Leet36 {
 

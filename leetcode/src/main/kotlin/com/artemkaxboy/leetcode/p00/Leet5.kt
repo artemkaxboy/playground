@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p00
 
 private class Leet5 {
     fun longestPalindrome(s: String): String {

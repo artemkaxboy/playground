@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p09
 
 import java.util.TreeMap
 import kotlin.system.measureTimeMillis

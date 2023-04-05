@@ -1,4 +1,4 @@
-package com.artemkaxboy.leetcode
+package com.artemkaxboy.leetcode.p00
 
 private class Leet6 {
     fun convert(s: String, numRows: Int): String {
