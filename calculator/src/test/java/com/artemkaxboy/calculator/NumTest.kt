@@ -16,6 +16,17 @@ class NumTest {
     }
 
     @Test
+    fun readAllDigitsNegative_passes() {
+        val input = "-01234567890"
+        val expected = "-1234567890"
+
+        val num = Num.fromInput(input)
+        val actual = num.toString()
+
+        Assertions.assertEquals(expected, actual)
+    }
+
+    @Test
     fun toString_dropsLeadingZeros() {
         val input = "00000001"
         val expected = "1"
@@ -145,5 +156,101 @@ class NumTest {
         val sum = v1 + v2
 
         Assertions.assertEquals(expected, sum.toString())
+    }
+
+    @Test
+    fun minus_passes() {
+        val v1 = "1000"
+        val v2 = "500"
+        val expected = "500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
+    }
+
+    @Test
+    fun minus_passes2() {
+        val v1 = "500"
+        val v2 = "1000"
+        val expected = "-500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
+    }
+
+    @Test
+    fun minus_passes3() {
+        val v1 = "-1000"
+        val v2 = "-500"
+        val expected = "-500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
+    }
+
+    @Test
+    fun minus_passes4() {
+        val v1 = "-500"
+        val v2 = "-1000"
+        val expected = "500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
+    }
+
+    @Test
+    fun minus_passes5() {
+        val v1 = "1000"
+        val v2 = "-500"
+        val expected = "1500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
+    }
+
+    @Test
+    fun minus_passes6() {
+        val v1 = "-1000"
+        val v2 = "500"
+        val expected = "-1500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
+    }
+
+    @Test
+    fun minus_passes7() {
+        val v1 = "500"
+        val v2 = "-1000"
+        val expected = "1500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
+    }
+
+    @Test
+    fun minus_passes8() {
+        val v1 = "-500"
+        val v2 = "1000"
+        val expected = "-1500"
+
+        val difference = Num.fromInput(v1) - Num.fromInput(v2)
+
+        Assertions.assertEquals(expected, difference.toString())
+
     }
 }
