@@ -3,7 +3,7 @@ package com.artemkaxboy.leetcode
 object LeetUtils {
 
     fun stringToIntArray(string: String): IntArray {
-        return string.trim('[', ']').split(",").map { it.toInt() }.toIntArray()
+        return string.trim('[', ']').split(",").mapNotNull { it.toIntOrNull() }.toIntArray()
     }
 
     fun stringToCharArray(string: String): CharArray {
