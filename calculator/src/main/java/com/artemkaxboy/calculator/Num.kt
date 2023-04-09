@@ -93,6 +93,10 @@ class Num(private val maxLen: Int) {
         return sum ?: fromInput("0")
     }
 
+    operator fun div(other: Num): Num {
+        throw NotImplementedError("TODO")
+    }
+
     operator fun minus(other: Num): Num {
         if (positive != other.positive) {
             // (+a) - (-b) -> (+a) + (+b)
