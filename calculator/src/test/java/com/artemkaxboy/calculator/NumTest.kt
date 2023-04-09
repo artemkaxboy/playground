@@ -82,6 +82,21 @@ class NumTest {
 
     @ParameterizedTest
     @CsvSource(
+        "99,99,9801", "-99,99,-9801", "99,-99,-9801", "-99,-99,9801", // overflow
+        "2,3,6", "20,3,60", "2,30,60", "20,30,600", // no overflow
+        "0,0,0", "99,0,0", "0,99,0",
+    )
+    fun times(s1: String, s2: String, expected: String) {
+        val v1 = Num.fromInput(s1)
+        val v2 = Num.fromInput(s2)
+
+        val actual = v1 * v2
+
+        Assertions.assertEquals(expected, actual.toString())
+    }
+
+    @ParameterizedTest
+    @CsvSource(
         "+1234567890,1234567890",
         "-1234567890,-1234567890",
         "000000000000000000000000000000000000000000000000000000,0",

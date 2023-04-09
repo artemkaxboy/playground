@@ -5,9 +5,11 @@ package com.artemkaxboy.calculator
  */
 class Num(private val maxLen: Int) {
 
+    private val elementVolume = 10
+
     private var positive = true
     private val intArray: IntArray = IntArray(maxLen + 1)
-    
+
     /**
      * Returns length of loaded number
      */
@@ -52,6 +54,43 @@ class Num(private val maxLen: Int) {
         sum.positive = positive
 
         return sum
+    }
+
+    operator fun times(other: Num): Num {
+        val (v1, v2) = if (getLength() > other.getLength()) this to other else other to this
+
+        val v1Length = v1.getLength()
+        val v2Length = v2.getLength()
+        var sum: Num? = null
+
+        var i = 1
+        while (i <= v2Length) {
+            val n2 = v2.getDigit(i)!!
+
+            val decadeMultiplication = Num(v1Length + i)
+            var j = 1
+            var overflow = 0
+            while (j <= v1Length) {
+                val n1 = v1.getDigit(j)!!
+                val m = n1 * n2 + overflow
+                decadeMultiplication.setDigit(j + (i - 1), m % elementVolume)
+                overflow = m / elementVolume
+                j++
+            }
+            if (overflow == 0) {
+                decadeMultiplication.setLength((j - 1) + (i - 1))
+            } else {
+                decadeMultiplication.setDigit(j + (i - 1), overflow)
+                decadeMultiplication.setLength(j + (i - 1))
+            }
+
+
+            sum = sum?.let { it + decadeMultiplication } ?: decadeMultiplication
+            i++
+        }
+
+        sum?.positive = positive == other.positive
+        return sum ?: fromInput("0")
     }
 
     operator fun minus(other: Num): Num {
