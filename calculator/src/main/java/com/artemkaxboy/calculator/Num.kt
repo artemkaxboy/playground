@@ -5,14 +5,9 @@ package com.artemkaxboy.calculator
  */
 class Num(private val maxLen: Int) {
 
-    var positive = true
+    private var positive = true
     private val intArray: IntArray = IntArray(maxLen + 1)
-
-    constructor(maxLen: Int, positive: Boolean, arrayToCopy: IntArray) : this(maxLen) {
-        this.positive = positive
-        arrayToCopy.copyInto(intArray, 0, 0, maxLen)
-    }
-
+    
     /**
      * Returns length of loaded number
      */
@@ -25,9 +20,9 @@ class Num(private val maxLen: Int) {
     /**
      * Returns digit [0-9] of the given decade or null if it is out of available range.
      */
-    fun getDigit(decade: Int): Int? = intArray.getOrNull(decade)
+    private fun getDigit(decade: Int): Int? = intArray.getOrNull(decade)
 
-    fun setDigit(decade: Int, digit: Int) = intArray.set(decade, digit)
+    private fun setDigit(decade: Int, digit: Int) = intArray.set(decade, digit)
 
     operator fun plus(other: Num): Num {
         if (positive != other.positive) {
@@ -98,9 +93,9 @@ class Num(private val maxLen: Int) {
 
         for (decade in 1..length) {
             getDigit(decade)
-                    ?.compareTo(requireNotNull(other.getDigit(decade)))
-                    ?.takeIf { it != 0 }
-                    ?.let { return it }
+                ?.compareTo(requireNotNull(other.getDigit(decade)))
+                ?.takeIf { it != 0 }
+                ?.let { return it }
         }
 
         return 0
@@ -114,12 +109,12 @@ class Num(private val maxLen: Int) {
 
     override fun toString(): String {
         return intArray.drop(1)
-                .reversed()
-                .joinToString("")
-                .dropWhile { it == '0' }
-                .takeIf { it.length > 0 }
-                ?.let { (if (this.positive) "" else "-") + it }
-                ?: "0"
+            .reversed()
+            .joinToString("")
+            .dropWhile { it == '0' }
+            .takeIf { it.isNotEmpty() }
+            ?.let { (if (this.positive) "" else "-") + it }
+            ?: "0"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -128,7 +123,10 @@ class Num(private val maxLen: Int) {
 
         other as Num
 
-        return intArray.contentEquals(other.intArray)
+        for (i in 0..getLength()) {
+            if (intArray[i] != other.intArray[i]) return false
+        }
+        return true
     }
 
     override fun hashCode(): Int {
@@ -160,9 +158,13 @@ class Num(private val maxLen: Int) {
                 }
 
                 intArray[arrayIndex] = char.digitToInt().takeIf { it in 0..9 }
-                        ?: return IllegalArgumentException("Unknown character $char in input string")
+                    ?: return IllegalArgumentException("Unknown character $char in input string")
                 arrayIndex++
                 stringIndex--
+            }
+            for (i in (stringLength) downTo 1) {
+                if (intArray[i] == 0) intArray[0]--
+                else break
             }
         }
 

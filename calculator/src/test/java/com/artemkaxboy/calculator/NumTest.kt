@@ -2,60 +2,117 @@ package com.artemkaxboy.calculator
 
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 class NumTest {
 
-    @Test
-    fun readAllDigits_passes() {
-        val expected = "1234567890"
+    @ParameterizedTest
+    @CsvSource(
+        "200,100", "200,-100", "100,-200", "-100,-200", // same length
+        "100, 50", "100,-50", "50,-100", "-50,-100", // dif length
+        "100,0", "0,-100", // zero
+    )
+    fun compare_firstGreater(s1: String, s2: String) {
+        val v1 = Num.fromInput(s1)
+        val v2 = Num.fromInput(s2)
 
-        val num = Num.fromInput(expected)
-        val actual = num.toString()
+        Assertions.assertTrue(v1 > v2)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "100,200", "-100,200", "-200,100", "-200,-100", // same length
+        "50,100", "-50,100", "-100,50", "-100,-50", // dif length
+        "0,100", "-100,0",
+    )
+    fun compare_firstLess(s1: String, s2: String) {
+        val v1 = Num.fromInput(s1)
+        val v2 = Num.fromInput(s2)
+
+        Assertions.assertTrue(v1 < v2)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "100,100", "0,0", "-0,0",
+    )
+    fun compare_equals(s1: String, s2: String) {
+        val v1 = Num.fromInput(s1)
+        val v2 = Num.fromInput(s2)
+
+        Assertions.assertTrue(v1 == v2)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "100,200,-100", "-100,200,-300", "100,-200,300", "-100,-200,100",
+        "100,50,50", "-100,50,-150", "100,-50,150", "-100,-50,-50",
+        "100,100,0", "-100,-100,0",
+        "100,0,100", "-100,0,-100", "100,-0,100", "-100,-0,-100",
+        "0,100,-100", "-0,100,-100", "0,-100,100", "-0,-100,100",
+        "19998,9999,9999",
+    )
+    fun difference(s1: String, s2: String, expected: String) {
+        val v1 = Num.fromInput(s1)
+        val v2 = Num.fromInput(s2)
+
+        val actual = v1 - v2
+
+        Assertions.assertEquals(expected, actual.toString())
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "100,200,300", "-100,200,100", "100,-200,-100", "-100,-200,-300",
+        "100,50,150", "-100,50,-50", "100,-50,50", "-100,-50,-150",
+        "100,100,200", "-100,-100,-200",
+        "100,0,100", "-100,0,-100", "100,-0,100", "-100,-0,-100",
+        "0,100,100", "-0,100,100", "0,-100,-100", "-0,-100,-100",
+        "9999,9999,19998",
+    )
+    fun sum(s1: String, s2: String, expected: String) {
+        val v1 = Num.fromInput(s1)
+        val v2 = Num.fromInput(s2)
+
+        val actual = v1 + v2
+
+        Assertions.assertEquals(expected, actual.toString())
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "+1234567890,1234567890",
+        "-1234567890,-1234567890",
+        "000000000000000000000000000000000000000000000000000000,0",
+        "+000000000000000000000000000000000000000000000000000000,0",
+        "-000000000000000000000000000000000000000000000000000000,0",
+        "0000000000000000000000000000000000000000000000000000001,1",
+        "+0000000000000000000000000000000000000000000000000000001,1",
+        "-0000000000000000000000000000000000000000000000000000001,-1",
+        "000000000000000000000000000000000000000000000000000000100,100",
+        "+000000000000000000000000000000000000000000000000000000100,100",
+        "-000000000000000000000000000000000000000000000000000000100,-100",
+        "999999999999999999999999999999999999999999999999999999,999999999999999999999999999999999999999999999999999999",
+        "-99999999999999999999999999999999999999999999999999999,-99999999999999999999999999999999999999999999999999999",
+    )
+    fun read_passes(input: String, expected: String) {
+        val v = Num.fromInput(input)
+        val actual = v.toString()
 
         Assertions.assertEquals(expected, actual)
     }
 
-    @Test
-    fun readAllDigitsNegative_passes() {
-        val input = "-01234567890"
-        val expected = "-1234567890"
-
-        val num = Num.fromInput(input)
-        val actual = num.toString()
-
-        Assertions.assertEquals(expected, actual)
-    }
-
-    @Test
-    fun toString_dropsLeadingZeros() {
-        val input = "00000001"
-        val expected = "1"
-
-        val num = Num.fromInput(input)
-        val actual = num.toString()
-
-        Assertions.assertEquals(expected, actual)
-    }
-
-    @Test
-    fun toString_leavesLastZero() {
-        val input = "00000000"
-        val expected = "0"
-
-        val num = Num.fromInput(input)
-        val actual = num.toString()
-
-        Assertions.assertEquals(expected, actual)
-    }
-
-    @Test
-    fun readLong_passes() {
-        val expected = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-
-        val num = Num.fromInput(expected)
-        val actual = num.toString()
-
-        Assertions.assertEquals(expected, actual)
+    @ParameterizedTest
+    @CsvSource(
+        "f",
+        "1111f1111",
+        "++1", "1+", "1+1",
+        "--1", "1-", "1-1",
+        "+-1", "-+1",
+    )
+    fun read_fails(input: String) {
+        Assertions.assertThrows(IllegalArgumentException::class.java) { Num.fromInput(input) }
     }
 
     @Test
@@ -67,220 +124,5 @@ class NumTest {
         val actual = num.toString()
 
         Assertions.assertEquals(expected, actual)
-    }
-
-    @Test
-    fun readLong_whenUnknownChar() {
-        val invalidInput = "123asdf123"
-
-        Assertions.assertThrows(IllegalArgumentException::class.java) { Num.fromInput(invalidInput) }
-    }
-
-    @Test
-    fun compare_equals() {
-        val s1 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-        val s2 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-
-        val num1 = Num.fromInput(s1)
-        val num2 = Num.fromInput(s2)
-        val actual1 = num1.compareTo(num2)
-        val actual2 = num2.compareTo(num1)
-
-        Assertions.assertEquals(actual1, actual2)
-        Assertions.assertEquals(actual1, 0)
-        Assertions.assertEquals(num1, num2)
-    }
-
-    @Test
-    fun compare_less() {
-        val s1 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-        val s2 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999998"
-
-        val num1 = Num.fromInput(s1)
-        val num2 = Num.fromInput(s2)
-        val actual1 = num1.compareTo(num2)
-        val actual2 = num2.compareTo(num1)
-
-        Assertions.assertTrue(actual1 > 0)
-        Assertions.assertTrue(actual2 < 0)
-    }
-
-    @Test
-    fun compare_less2() {
-        val s1 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-        val s2 = "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-
-        val num1 = Num.fromInput(s1)
-        val num2 = Num.fromInput(s2)
-        val actual1 = num1.compareTo(num2)
-        val actual2 = num2.compareTo(num1)
-
-        Assertions.assertTrue(actual1 > 0)
-        Assertions.assertTrue(actual2 < 0)
-    }
-
-    @Test
-    fun compare_greater() {
-        val s1 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999998"
-        val s2 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-
-        val num1 = Num.fromInput(s1)
-        val num2 = Num.fromInput(s2)
-        val actual1 = num1.compareTo(num2)
-        val actual2 = num2.compareTo(num1)
-
-        Assertions.assertTrue(actual1 < 0)
-        Assertions.assertTrue(actual2 > 0)
-    }
-
-    @Test
-    fun compare_greater2() {
-        val s1 = "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-        val s2 = "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-
-        val num1 = Num.fromInput(s1)
-        val num2 = Num.fromInput(s2)
-        val actual1 = num1.compareTo(num2)
-        val actual2 = num2.compareTo(num1)
-
-        Assertions.assertTrue(actual1 < 0)
-        Assertions.assertTrue(actual2 > 0)
-    }
-
-    @Test
-    fun compare_negative() {
-        val v1 = Num.fromInput("-100")
-        val v2 = Num.fromInput("200")
-
-        Assertions.assertEquals(0, v1.compareTo(v1))
-        Assertions.assertEquals(0, v2.compareTo(v2))
-        Assertions.assertTrue(v1 < v2)
-    }
-
-    @Test
-    fun compare_negative2() {
-        val v1 = Num.fromInput("-100")
-        val v2 = Num.fromInput("-200")
-
-        Assertions.assertEquals(0, v1.compareTo(v1))
-        Assertions.assertEquals(0, v2.compareTo(v2))
-        Assertions.assertTrue(v1 > v2)
-    }
-
-    @Test
-    fun compare_negative3() {
-        val v1 = Num.fromInput("-200")
-        val v2 = Num.fromInput("-200")
-
-        Assertions.assertEquals(0, v1.compareTo(v1))
-        Assertions.assertEquals(0, v2.compareTo(v2))
-        Assertions.assertTrue(v1 == v2)
-    }
-
-    @Test
-    fun plus_passes() {
-        val expected = "44400000000000000000000000000000000000000000000"
-        val v1 = Num.fromInput("12300000000000000000000000000000000000000000000")
-        val v2 = Num.fromInput("32100000000000000000000000000000000000000000000")
-
-        val sum = v1 + v2
-
-        Assertions.assertEquals(expected, sum.toString())
-    }
-
-    @Test
-    fun minus_passes() {
-        val v1 = "1000"
-        val v2 = "500"
-        val expected = "500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
-    }
-
-    @Test
-    fun minus_passes2() {
-        val v1 = "500"
-        val v2 = "1000"
-        val expected = "-500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
-    }
-
-    @Test
-    fun minus_passes3() {
-        val v1 = "-1000"
-        val v2 = "-500"
-        val expected = "-500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
-    }
-
-    @Test
-    fun minus_passes4() {
-        val v1 = "-500"
-        val v2 = "-1000"
-        val expected = "500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
-    }
-
-    @Test
-    fun minus_passes5() {
-        val v1 = "1000"
-        val v2 = "-500"
-        val expected = "1500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
-    }
-
-    @Test
-    fun minus_passes6() {
-        val v1 = "-1000"
-        val v2 = "500"
-        val expected = "-1500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
-    }
-
-    @Test
-    fun minus_passes7() {
-        val v1 = "500"
-        val v2 = "-1000"
-        val expected = "1500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
-    }
-
-    @Test
-    fun minus_passes8() {
-        val v1 = "-500"
-        val v2 = "1000"
-        val expected = "-1500"
-
-        val difference = Num.fromInput(v1) - Num.fromInput(v2)
-
-        Assertions.assertEquals(expected, difference.toString())
-
     }
 }
