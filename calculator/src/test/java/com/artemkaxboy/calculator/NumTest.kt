@@ -148,6 +148,36 @@ class NumTest {
     }
 
     @Test
+    fun compare_negative() {
+        val v1 = Num.fromInput("-100")
+        val v2 = Num.fromInput("200")
+
+        Assertions.assertEquals(0, v1.compareTo(v1))
+        Assertions.assertEquals(0, v2.compareTo(v2))
+        Assertions.assertTrue(v1 < v2)
+    }
+
+    @Test
+    fun compare_negative2() {
+        val v1 = Num.fromInput("-100")
+        val v2 = Num.fromInput("-200")
+
+        Assertions.assertEquals(0, v1.compareTo(v1))
+        Assertions.assertEquals(0, v2.compareTo(v2))
+        Assertions.assertTrue(v1 > v2)
+    }
+
+    @Test
+    fun compare_negative3() {
+        val v1 = Num.fromInput("-200")
+        val v2 = Num.fromInput("-200")
+
+        Assertions.assertEquals(0, v1.compareTo(v1))
+        Assertions.assertEquals(0, v2.compareTo(v2))
+        Assertions.assertTrue(v1 == v2)
+    }
+
+    @Test
     fun plus_passes() {
         val expected = "44400000000000000000000000000000000000000000000"
         val v1 = Num.fromInput("12300000000000000000000000000000000000000000000")

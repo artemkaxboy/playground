@@ -92,7 +92,7 @@ class Num(private val maxLen: Int) {
         return this.apply { positive = !positive }
     }
 
-    fun absCompareTo(other: Num): Int {
+    private fun absCompareTo(other: Num): Int {
         val length = getLength()
         length.compareTo(other.getLength()).takeIf { it != 0 }?.let { return it }
 
@@ -107,17 +107,9 @@ class Num(private val maxLen: Int) {
     }
 
     operator fun compareTo(other: Num): Int {
-        val length = getLength()
-        length.compareTo(other.getLength()).takeIf { it != 0 }?.let { return it }
+        if (positive != other.positive) return if (positive) 1 else -1
 
-        for (decade in 1..length) {
-            getDigit(decade)
-                    ?.compareTo(requireNotNull(other.getDigit(decade)))
-                    ?.takeIf { it != 0 }
-                    ?.let { return it }
-        }
-
-        return 0
+        return absCompareTo(other).let { if (positive) it else -it }
     }
 
     override fun toString(): String {
