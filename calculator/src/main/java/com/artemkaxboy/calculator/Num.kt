@@ -5,26 +5,27 @@ package com.artemkaxboy.calculator
  */
 class Num(private val maxLen: Int) {
 
-    private val elementVolume = 10
-
     private var positive = true
-    private val intArray: IntArray = IntArray(maxLen + 1)
+    private var length = 0
+    private val intArray: IntArray = IntArray(maxLen)
+
+    private val elementVolume = 10
 
     /**
      * Returns length of loaded number
      */
-    private fun getLength() = intArray[0]
+    private fun getLength() = length
 
     private fun setLength(length: Int) {
-        intArray[0] = length
+        this.length = length
     }
 
     /**
      * Returns digit [0-9] of the given decade or null if it is out of available range.
      */
-    private fun getDigit(decade: Int): Int? = intArray.getOrNull(decade)
+    private fun getDigit(decade: Int): Int? = intArray.getOrNull(decade - 1)
 
-    private fun setDigit(decade: Int, digit: Int) = intArray.set(decade, digit)
+    private fun setDigit(decade: Int, digit: Int) = intArray.set(decade - 1, digit)
 
     operator fun plus(other: Num): Num {
         if (positive != other.positive) {
@@ -41,8 +42,8 @@ class Num(private val maxLen: Int) {
             val n1 = this.getDigit(i) ?: 0
             val n2 = other.getDigit(i) ?: 0
             val s1 = n1 + n2 + overflow
-            sum.setDigit(i, s1 % 10)
-            overflow = s1 / 10
+            sum.setDigit(i, s1 % elementVolume)
+            overflow = s1 / elementVolume
             i++
         }
         if (overflow == 0) {
@@ -84,7 +85,6 @@ class Num(private val maxLen: Int) {
                 decadeMultiplication.setLength(j + (i - 1))
             }
 
-
             sum = sum?.let { it + decadeMultiplication } ?: decadeMultiplication
             i++
         }
@@ -94,7 +94,28 @@ class Num(private val maxLen: Int) {
     }
 
     operator fun div(other: Num): Num {
-        throw NotImplementedError("TODO")
+        var i = getLength()
+        // if other longer the answer is 0
+        // if other = 10, return subnum
+        while (i > 0) {
+//            getSubNumber()
+//            if () // todo make a copy of this with i decades, check if it is greater than the other
+            // if so substract while it is still greater
+            // when comes less add next decade to the remain, etc
+            println(i)
+
+            i--
+        }
+
+        return this
+    }
+
+    private fun getSubNumber(startDecade: Int, length: Int): Num {
+
+        intArray.slice(startDecade until (startDecade + length))
+        val subnum = Num(length)
+
+        return subnum
     }
 
     operator fun minus(other: Num): Num {
@@ -126,6 +147,9 @@ class Num(private val maxLen: Int) {
         return difference
     }
 
+    /**
+     * Change number sign +/-.
+     */
     operator fun unaryMinus(): Num {
         return this.apply { positive = !positive }
     }
@@ -151,10 +175,10 @@ class Num(private val maxLen: Int) {
     }
 
     override fun toString(): String {
-        return intArray.drop(1)
+        return intArray
             .reversed()
+            .dropWhile { it == 0 }
             .joinToString("")
-            .dropWhile { it == '0' }
             .takeIf { it.isNotEmpty() }
             ?.let { (if (this.positive) "" else "-") + it }
             ?: "0"
@@ -166,8 +190,10 @@ class Num(private val maxLen: Int) {
 
         other as Num
 
-        for (i in 0..getLength()) {
-            if (intArray[i] != other.intArray[i]) return false
+        if (length == 0 && other.length == 0) return true
+        if (positive != other.positive || length != other.length) return false
+        for (i in 1..getLength()) {
+            if (getDigit(i) != other.getDigit(i)) return false
         }
         return true
     }
@@ -182,8 +208,8 @@ class Num(private val maxLen: Int) {
         if (stringLength > maxLen) {
             return IllegalArgumentException("Input string length exceeded max available length $maxLen")
         } else {
-            intArray[0] = stringLength
-            var arrayIndex = 1
+            setLength(stringLength)
+            var decade = 1
             var stringIndex = stringLength - 1
             while (stringIndex >= 0) {
                 val char = string[stringIndex]
@@ -200,18 +226,24 @@ class Num(private val maxLen: Int) {
                     }
                 }
 
-                intArray[arrayIndex] = char.digitToInt().takeIf { it in 0..9 }
+                char.digitToInt().takeIf { it in 0..9 }?.let { setDigit(decade, it) }
                     ?: return IllegalArgumentException("Unknown character $char in input string")
-                arrayIndex++
+                decade++
                 stringIndex--
             }
-            for (i in (stringLength) downTo 1) {
-                if (intArray[i] == 0) intArray[0]--
-                else break
-            }
+            setLength(findRealLength())
         }
 
         return null
+    }
+
+    private fun findRealLength(): Int {
+        var realLength = intArray.size
+        for (i in (realLength) downTo 1) { // length cannot be less than 1 digit, even if it is 0
+            if (getDigit(i) == 0) realLength--
+            else break
+        }
+        return realLength
     }
 
     companion object {
