@@ -1,16 +1,11 @@
 package chapter3;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class WordGrid {
 
-    private final char ALPHABET_LENGTH = 26;
-    private final char FIRST_LETTER = 'A';
+    private final char ALPHABET_LENGTH = 1;
+    private final char FIRST_LETTER = ' ';
     private final int rows;
     private final int columns;
     private final char[][] grid;
@@ -30,8 +25,8 @@ public class WordGrid {
     }
 
     public static void main(String[] args) {
-        WordGrid grid = new WordGrid(9, 9);
-        List<String> words = List.of("MATTHEW", "JOE", "MARY", "SARAH", "SALLY");
+        WordGrid grid = new WordGrid(4, 4);
+        List<String> words = List.of("ABC", "DEF", "GHI", "AEI", "AFG", "BCD", "CDE", "HIJ", "IEA", "ECD", "OAF", "JCDI");
         Map<String, List<List<GridLocation>>> domains = new HashMap<>();
         for (String word : words) {
             List<List<GridLocation>> domain = grid.generateDomain(word);
@@ -39,7 +34,7 @@ public class WordGrid {
             domains.put(word, domain);
         }
         CSP<String, List<GridLocation>> csp = new CSP<>(words, domains);
-        csp.addConstraint(new WordSearchConstraint(words));
+        csp.addConstraint(new CrossingWordSearchConstraint(words));
         Map<String, List<GridLocation>> solution = csp.backtrackingSearch();
         if (solution == null) {
             System.out.println("No solution found!");
@@ -48,9 +43,9 @@ public class WordGrid {
             for (Map.Entry<String, List<GridLocation>> item : solution.entrySet()) {
                 String word = item.getKey();
                 List<GridLocation> locations = item.getValue();
-                if (random.nextBoolean()) {
-                    Collections.reverse(locations);
-                }
+//                if (random.nextBoolean()) {
+//                    Collections.reverse(locations);
+//                }
                 grid.mark(word, locations);
             }
             System.out.println(grid);
@@ -84,6 +79,12 @@ public class WordGrid {
                         fillDiagonalLeft(domain, row, column, length);
                     }
                 }
+                if (column + 1 >= length) {
+                    fillLeft(domain, row, column, length);
+                }
+                if (row + 1 >= length) {
+                    fillUp(domain, row, column, length);
+                }
             }
         }
 
@@ -93,6 +94,14 @@ public class WordGrid {
     private void fillRight(List<List<GridLocation>> domain, int row, int column, int length) {
         List<GridLocation> locations = new ArrayList<>();
         for (int c = column; c < (column + length); c++) {
+            locations.add(new GridLocation(row, c));
+        }
+        domain.add(locations);
+    }
+
+    private void fillLeft(List<List<GridLocation>> domain, int row, int column, int length) {
+        List<GridLocation> locations = new ArrayList<>();
+        for (int c = column; c > (column - length); c--) {
             locations.add(new GridLocation(row, c));
         }
         domain.add(locations);
@@ -109,6 +118,14 @@ public class WordGrid {
     private void fillDown(List<List<GridLocation>> domain, int row, int column, int length) {
         List<GridLocation> locations = new ArrayList<>();
         for (int r = row; r < (row + length); r++) {
+            locations.add(new GridLocation(r, column));
+        }
+        domain.add(locations);
+    }
+
+    private void fillUp(List<List<GridLocation>> domain, int row, int column, int length) {
+        List<GridLocation> locations = new ArrayList<>();
+        for (int r = row; r > (row - length); r--) {
             locations.add(new GridLocation(r, column));
         }
         domain.add(locations);
