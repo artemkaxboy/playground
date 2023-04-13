@@ -7,14 +7,35 @@ class Num(private val maxLen: Int) {
 
     private var positive = true
     private var length = 0
-    private val intArray: IntArray = IntArray(maxLen)
+    private val intArray: IntArray = IntArray(maxLen) // asList asReversed use the same memory
 
     private val elementVolume = 10
+
+    private fun copy(): Num {
+        val length = getLength()
+        val newNum = Num(length)
+        intArray.copyInto(newNum.intArray, 0, 0, length)
+        newNum.positive = positive
+        newNum.length = length
+
+        return newNum
+    }
+
+    private fun copyWithShiftLeft(decades: Int): Num {
+        require(decades >= 0) { "Shift must be zero or positive" }
+        val srcLength = getLength()
+        val newNum = Num(srcLength + decades)
+        intArray.copyInto(newNum.intArray, decades, 0, srcLength)
+        newNum.positive = positive
+        newNum.length = srcLength + decades
+
+        return newNum
+    }
 
     /**
      * Returns length of loaded number
      */
-    private fun getLength() = length
+    private fun getLength() = intArray.size - intArray.asList().asReversed().takeWhile { it == 0 }.count()
 
     private fun setLength(length: Int) {
         this.length = length
@@ -27,6 +48,9 @@ class Num(private val maxLen: Int) {
 
     private fun setDigit(decade: Int, digit: Int) = intArray.set(decade - 1, digit)
 
+    /**
+     * Creates new Num = `this` + `other`
+     */
     operator fun plus(other: Num): Num {
         if (positive != other.positive) {
             return if (this.positive) this - (-other)   // (+a) + (-b) -> (+a) - (+b)
@@ -57,6 +81,9 @@ class Num(private val maxLen: Int) {
         return sum
     }
 
+    /**
+     * Creates new Num = `this` * `other`
+     */
     operator fun times(other: Num): Num {
         val (v1, v2) = if (getLength() > other.getLength()) this to other else other to this
 
@@ -94,28 +121,35 @@ class Num(private val maxLen: Int) {
     }
 
     operator fun div(other: Num): Num {
-        var i = getLength()
+//        999999999999999999 / 9
+//        900000000000000000
+        val v1Length = getLength()
+        val v2Length = other.getLength()
         // if other longer the answer is 0
         // if other = 10, return subnum
-        while (i > 0) {
+        if (v2Length > v1Length) return fromInput("0")
+        var shift = v1Length - v2Length
+        val stringBuilder = StringBuilder()
+        var remain = this
+        while (shift >= 0) {
+            val v2Shifted = other.copyWithShiftLeft(shift)
 //            getSubNumber()
 //            if () // todo make a copy of this with i decades, check if it is greater than the other
             // if so substract while it is still greater
             // when comes less add next decade to the remain, etc
-            println(i)
+//            println(shift)
 
-            i--
+            var i = 0
+            while (remain.absCompareTo(v2Shifted) >= 0) {
+                remain = remain - v2Shifted
+                i++
+            }
+            stringBuilder.append(i)
+
+            shift--
         }
 
-        return this
-    }
-
-    private fun getSubNumber(startDecade: Int, length: Int): Num {
-
-        intArray.slice(startDecade until (startDecade + length))
-        val subnum = Num(length)
-
-        return subnum
+        return fromInput(stringBuilder.toString())
     }
 
     operator fun minus(other: Num): Num {
@@ -151,14 +185,18 @@ class Num(private val maxLen: Int) {
      * Change number sign +/-.
      */
     operator fun unaryMinus(): Num {
-        return this.apply { positive = !positive }
+        return copy().apply { invert() }
+    }
+
+    private fun invert() {
+        positive = !positive
     }
 
     private fun absCompareTo(other: Num): Int {
         val length = getLength()
         length.compareTo(other.getLength()).takeIf { it != 0 }?.let { return it }
 
-        for (decade in 1..length) {
+        for (decade in length downTo 1) {
             getDigit(decade)
                 ?.compareTo(requireNotNull(other.getDigit(decade)))
                 ?.takeIf { it != 0 }
