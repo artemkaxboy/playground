@@ -130,9 +130,9 @@ class Num(private val maxLen: Int) {
         if (v2Length > v1Length) return fromInput("0")
         var shift = v1Length - v2Length
         val stringBuilder = StringBuilder()
-        var remain = this
+        var remain = copy().apply { positive = true }
         while (shift >= 0) {
-            val v2Shifted = other.copyWithShiftLeft(shift)
+            val v2Shifted = other.copyWithShiftLeft(shift).apply { positive = true }
 //            getSubNumber()
 //            if () // todo make a copy of this with i decades, check if it is greater than the other
             // if so substract while it is still greater
@@ -140,7 +140,7 @@ class Num(private val maxLen: Int) {
 //            println(shift)
 
             var i = 0
-            while (remain.absCompareTo(v2Shifted) >= 0) {
+            while (remain >= v2Shifted) {
                 remain = remain - v2Shifted
                 i++
             }
@@ -149,7 +149,8 @@ class Num(private val maxLen: Int) {
             shift--
         }
 
-        return fromInput(stringBuilder.toString())
+        val sign = if (this.positive != other.positive) "-" else ""
+        return fromInput(sign + stringBuilder.toString())
     }
 
     operator fun minus(other: Num): Num {
