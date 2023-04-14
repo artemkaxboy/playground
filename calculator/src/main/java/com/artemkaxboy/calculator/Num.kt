@@ -6,28 +6,18 @@ package com.artemkaxboy.calculator
 class Num(private val maxLen: Int) {
 
     private var positive = true
-    private var length = 0
+    private val negative
+        get() = !positive
     private val intArray: IntArray = IntArray(maxLen) // asList asReversed use the same memory
 
     private val elementVolume = 10
 
-    private fun copy(): Num {
-        val length = getLength()
-        val newNum = Num(length)
-        intArray.copyInto(newNum.intArray, 0, 0, length)
+    private fun copy(shiftLeft: Int = 0): Num {
+        require(shiftLeft >= 0) { "Shift must not be negative" }
+        val srcLength = getElementsCount()
+        val newNum = Num(srcLength + shiftLeft)
+        intArray.copyInto(newNum.intArray, shiftLeft, 0, srcLength)
         newNum.positive = positive
-        newNum.length = length
-
-        return newNum
-    }
-
-    private fun copyWithShiftLeft(decades: Int): Num {
-        require(decades >= 0) { "Shift must be zero or positive" }
-        val srcLength = getLength()
-        val newNum = Num(srcLength + decades)
-        intArray.copyInto(newNum.intArray, decades, 0, srcLength)
-        newNum.positive = positive
-        newNum.length = srcLength + decades
 
         return newNum
     }
@@ -35,81 +25,69 @@ class Num(private val maxLen: Int) {
     /**
      * Returns length of loaded number
      */
-    private fun getLength() = intArray.size - intArray.asList().asReversed().takeWhile { it == 0 }.count()
-
-    private fun setLength(length: Int) {
-        this.length = length
-    }
+    private fun getElementsCount() = intArray.size - intArray.asList().asReversed().takeWhile { it == 0 }.count()
 
     /**
      * Returns digit [0-9] of the given decade or null if it is out of available range.
      */
-    private fun getDigit(decade: Int): Int? = intArray.getOrNull(decade - 1)
+    private fun getElement(decade: Int): Int? = intArray.getOrNull(decade - 1)
 
-    private fun setDigit(decade: Int, digit: Int) = intArray.set(decade - 1, digit)
+    private fun setElement(decade: Int, digit: Int) = intArray.set(decade - 1, digit)
 
     /**
      * Creates new Num = `this` + `other`
      */
     operator fun plus(other: Num): Num {
-        if (positive != other.positive) {
-            return if (this.positive) this - (-other)   // (+a) + (-b) -> (+a) - (+b)
-            else other - (-this)                        // (-a) + (+b) -> (+b) - (+a)
-        }
+        if (this.positive && other.negative) return this - (-other) //  a+(-b) >>> a-b
+        if (this.negative && other.positive) return other - (-this) //  -a+b   >>> b-a
 
-        val maxNumLength = maxOf(getLength(), other.getLength())
-        val sum = Num(maxNumLength + 1)
+        val maxElementsCount = maxOf(getElementsCount(), other.getElementsCount())
+        val sum = Num(maxElementsCount + 1)
 
         var overflow = 0
         var i = 1
-        while (i <= maxNumLength) {
-            val n1 = this.getDigit(i) ?: 0
-            val n2 = other.getDigit(i) ?: 0
-            val s1 = n1 + n2 + overflow
-            sum.setDigit(i, s1 % elementVolume)
-            overflow = s1 / elementVolume
+        while (i <= maxElementsCount) {
+            val v1 = this.getElement(i) ?: 0
+            val v2 = other.getElement(i) ?: 0
+            val r = v1 + v2 + overflow
+            sum.setElement(i, r % elementVolume)
+            overflow = r / elementVolume
             i++
         }
-        if (overflow == 0) {
-            sum.setLength(i - 1)
-        } else {
-            sum.setDigit(i, overflow)
-            sum.setLength(i)
+        if (overflow != 0) {
+            sum.setElement(i, overflow)
         }
         sum.positive = positive
 
-        return sum
+        return sum.copy()
     }
 
     /**
      * Creates new Num = `this` * `other`
      */
     operator fun times(other: Num): Num {
-        val (v1, v2) = if (getLength() > other.getLength()) this to other else other to this
+        val (v1, v2) = if (getElementsCount() > other.getElementsCount()) this to other else other to this
 
-        val v1Length = v1.getLength()
-        val v2Length = v2.getLength()
+        val v1Length = v1.getElementsCount()
+        val v2Length = v2.getElementsCount()
         var sum: Num? = null
 
         var i = 1
         while (i <= v2Length) {
-            val n2 = v2.getDigit(i)!!
+            val n2 = v2.getElement(i)!!
 
             val decadeMultiplication = Num(v1Length + i)
             var j = 1
             var overflow = 0
             while (j <= v1Length) {
-                val n1 = v1.getDigit(j)!!
+                val n1 = v1.getElement(j)!!
                 val m = n1 * n2 + overflow
-                decadeMultiplication.setDigit(j + (i - 1), m % elementVolume)
+                decadeMultiplication.setElement(j + (i - 1), m % elementVolume)
                 overflow = m / elementVolume
                 j++
             }
-            if (overflow == 0) {
-                decadeMultiplication.setLength((j - 1) + (i - 1))
-            } else {
-                decadeMultiplication.setDigit(j + (i - 1), overflow)
-                decadeMultiplication.setLength(j + (i - 1))
+            if (overflow != 0) {
+                decadeMultiplication.setElement(j + (i - 1), overflow)
             }
 
             sum = sum?.let { it + decadeMultiplication } ?: decadeMultiplication
@@ -123,8 +101,8 @@ class Num(private val maxLen: Int) {
     operator fun div(other: Num): Num {
 //        999999999999999999 / 9
 //        900000000000000000
-        val v1Length = getLength()
-        val v2Length = other.getLength()
+        val v1Length = getElementsCount()
+        val v2Length = other.getElementsCount()
         // if other longer the answer is 0
         // if other = 10, return subnum
         if (v2Length > v1Length) return fromInput("0")
@@ -132,7 +110,7 @@ class Num(private val maxLen: Int) {
         val stringBuilder = StringBuilder()
         var remain = copy().apply { positive = true }
         while (shift >= 0) {
-            val v2Shifted = other.copyWithShiftLeft(shift).apply { positive = true }
+            val v2Shifted = other.copy(shift).apply { positive = true }
 //            getSubNumber()
 //            if () // todo make a copy of this with i decades, check if it is greater than the other
             // if so substract while it is still greater
@@ -164,16 +142,16 @@ class Num(private val maxLen: Int) {
         }
         // from here `this` is always greater than the other
 
-        val maxNumLength = maxOf(getLength(), other.getLength())
+        val maxNumLength = maxOf(getElementsCount(), other.getElementsCount())
         val difference = Num(maxNumLength)
 
         var overflow = 0
         var i = 1
         while (i <= maxNumLength) {
-            val n1 = this.getDigit(i) ?: 0
-            val n2 = other.getDigit(i) ?: 0
+            val n1 = this.getElement(i) ?: 0
+            val n2 = other.getElement(i) ?: 0
             val d1 = n1 - n2 + overflow
-            difference.setDigit(i, (d1 + 10) % 10)
+            difference.setElement(i, (d1 + 10) % 10)
             overflow = if (d1 < 0) -1 else 0
             i++
         }
@@ -194,12 +172,12 @@ class Num(private val maxLen: Int) {
     }
 
     private fun absCompareTo(other: Num): Int {
-        val length = getLength()
-        length.compareTo(other.getLength()).takeIf { it != 0 }?.let { return it }
+        val length = getElementsCount()
+        length.compareTo(other.getElementsCount()).takeIf { it != 0 }?.let { return it }
 
         for (decade in length downTo 1) {
-            getDigit(decade)
-                ?.compareTo(requireNotNull(other.getDigit(decade)))
+            getElement(decade)
+                ?.compareTo(requireNotNull(other.getElement(decade)))
                 ?.takeIf { it != 0 }
                 ?.let { return it }
         }
@@ -229,10 +207,12 @@ class Num(private val maxLen: Int) {
 
         other as Num
 
-        if (length == 0 && other.length == 0) return true
-        if (positive != other.positive || length != other.length) return false
-        for (i in 1..getLength()) {
-            if (getDigit(i) != other.getDigit(i)) return false
+        val length = getElementsCount()
+        val otherLength = other.getElementsCount()
+        if (length == 0 && otherLength == 0) return true
+        if (positive != other.positive || length != otherLength) return false
+        for (i in 1..getElementsCount()) {
+            if (getElement(i) != other.getElement(i)) return false
         }
         return true
     }
@@ -247,7 +227,6 @@ class Num(private val maxLen: Int) {
         if (stringLength > maxLen) {
             return IllegalArgumentException("Input string length exceeded max available length $maxLen")
         } else {
-            setLength(stringLength)
             var decade = 1
             var stringIndex = stringLength - 1
             while (stringIndex >= 0) {
@@ -265,12 +244,11 @@ class Num(private val maxLen: Int) {
                     }
                 }
 
-                char.digitToInt().takeIf { it in 0..9 }?.let { setDigit(decade, it) }
+                char.digitToInt().takeIf { it in 0..9 }?.let { setElement(decade, it) }
                     ?: return IllegalArgumentException("Unknown character $char in input string")
                 decade++
                 stringIndex--
             }
-            setLength(findRealLength())
         }
 
         return null
@@ -279,7 +257,7 @@ class Num(private val maxLen: Int) {
     private fun findRealLength(): Int {
         var realLength = intArray.size
         for (i in (realLength) downTo 1) { // length cannot be less than 1 digit, even if it is 0
-            if (getDigit(i) == 0) realLength--
+            if (getElement(i) == 0) realLength--
             else break
         }
         return realLength
