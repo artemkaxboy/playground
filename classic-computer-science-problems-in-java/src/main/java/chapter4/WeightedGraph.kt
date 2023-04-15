@@ -54,6 +54,43 @@ class WeightedGraph<V>(vertices: List<V>) : Graph<V, WeightedEdge>(vertices) {
         println("Total Weight: ${totalWeight(wp)}")
     }
 
+    fun dijkstra(root: V): DijkstraResult {
+        val first = indexOf(root)
+        val vertexCount = getVertexCount()
+        val distances = DoubleArray(vertexCount).apply { this[first] = 0.0 }
+        val visited = BooleanArray(vertexCount).apply { this[first] = true }
+
+        val pathMap = HashMap<Int, WeightedEdge>()
+        val pq = PriorityQueue<DijkstraNode>()
+        pq.offer(DijkstraNode(first, 0.0))
+
+        while (pq.isNotEmpty()) {
+            val u = pq.poll().vertex
+            val distU = distances[u]
+
+            edgesOf(u).forEach { we ->
+                val distV = distances[we.v]
+                val pathWeight = we.weight + distU
+                if (!visited[we.v] || (distV > pathWeight)) {
+                    visited[we.v] = true
+                    distances[we.v] = pathWeight
+                    pathMap.put(we.v, we)
+                    pq.offer(DijkstraNode(we.v, pathWeight))
+                }
+            }
+        }
+
+        return DijkstraResult(distances, pathMap)
+    }
+
+    fun distanceArrayToDistanceMpa(distances: DoubleArray): Map<V, Double> {
+        val distanceMap = HashMap<V, Double>(distances.size)
+        for (i in distances.indices) {
+            distanceMap[vertexAt(i)] = distances[i]
+        }
+        return distanceMap
+    }
+
     override fun toString(): String {
         val sb = StringBuilder()
         for (i in 0 until getVertexCount()) {
@@ -72,7 +109,36 @@ class WeightedGraph<V>(vertices: List<V>) : Graph<V, WeightedEdge>(vertices) {
         fun totalWeight(path: List<WeightedEdge>): Double {
             return path.sumOf { it.weight }
         }
+
+        fun pathMapToPath(start: Int, end: Int, pathMap: Map<Int, WeightedEdge>): List<WeightedEdge> {
+            if (pathMap.isEmpty()) return emptyList()
+            val path = LinkedList<WeightedEdge>()
+            var edge = pathMap[end]!!
+            path.add(edge)
+            while (edge.u != start) {
+                edge = pathMap[edge.u]!!
+                path.add(edge)
+            }
+            return path.asReversed()
+        }
     }
+
+    data class DijkstraNode(
+            val vertex: Int,
+            val distance: Double,
+    ) : Comparable<DijkstraNode> {
+
+        override fun compareTo(other: DijkstraNode): Int {
+            val mine = distance
+            val theirs = other.distance
+            return mine.compareTo(theirs)
+        }
+    }
+
+    data class DijkstraResult(
+            val distances: DoubleArray,
+            val pathMap: Map<Int, WeightedEdge>,
+    )
 }
 
 fun main() {
@@ -112,4 +178,16 @@ fun main() {
 
     val mst = cityGraph2.mst(0)
     cityGraph2.printWeightedPath(mst)
+
+    val srcVertex = "Los Angeles"
+    val dstVertex = "Boston"
+    val dijkstraResult = cityGraph2.dijkstra(srcVertex)
+    val nameDistance = cityGraph2.distanceArrayToDistanceMpa(dijkstraResult.distances)
+    println("${System.lineSeparator()}Distances from $srcVertex:")
+    nameDistance.forEach { (name, distance) -> println("$name : $distance") }
+
+    println("${System.lineSeparator()}Shortest path from $srcVertex to $dstVertex:")
+    val path = WeightedGraph.pathMapToPath(
+            cityGraph2.indexOf(srcVertex), cityGraph2.indexOf(dstVertex), dijkstraResult.pathMap)
+    cityGraph2.printWeightedPath(path)
 }
