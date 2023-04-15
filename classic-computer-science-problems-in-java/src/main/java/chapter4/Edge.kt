@@ -1,11 +1,17 @@
 package chapter4
 
 open class Edge(
-        val u: Int,     // from
-        val v: Int,     // where
+        /**
+         * From
+         */
+        val u: Int,
+        /**
+         * Where
+         */
+        val v: Int,
 ) {
 
-    fun reversed(): Edge {
+    open fun reversed(): Edge {
         return Edge(v, u)
     }
 

@@ -2,16 +2,13 @@ package chapter4
 
 // V - type of vertices
 // E - type of edges
-abstract class Graph<V, E : Edge> {
+abstract class Graph<V, E : Edge>(vertices: List<V> = emptyList()) {
 
-    private val vertices = ArrayList<V>()
+    private val vertices = ArrayList(vertices)
     protected val edges = ArrayList<ArrayList<E>>()
 
-    constructor()
-
-    constructor(vertices: List<V>) {
-        this.vertices.addAll(vertices)
-        vertices.forEach { vertex ->
+    init {
+        repeat(vertices.size) {
             edges.add(ArrayList())
         }
     }
