@@ -8,20 +8,23 @@ class Leet {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val testCase1 = "" to ""
+            val testCase1 = Data("", "")
             doWork(testCase1)
         }
 
-        private fun doWork(data: Pair<Any, Any>) {
+        private fun doWork(data: Data) {
             val solution = Solution()
 
-            val result = "comment me"
-//            val result = solution.process(data)
+            val result = null //solution.process(data)
 
-            println("Data:     ${data.first}")
-            println("Expected: ${data.second}")
+            println("Data:     ${data.input}")
+            println("Expected: ${data.expected}")
             println("Result:   $result\n")
         }
-
     }
+
+    data class Data(
+        val input: Any,
+        val expected: Any
+    )
 }

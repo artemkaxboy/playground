@@ -15,14 +15,14 @@ class Leet230 {
             node: TreeNode?,
             list: LinkedList<TreeNode>,
         ) {
-            if (node != null) {
-
-
-                result.addAll(bTreeToLinkedList(node.left))
-                result.add(node)
-                result.addAll(bTreeToLinkedList(node.right))
-            }
-            return result
+//            if (node != null) {
+//
+//
+//                result.addAll(bTreeToLinkedList(node.left))
+//                result.add(node)
+//                result.addAll(bTreeToLinkedList(node.right))
+//            }
+//            return result
         }
     }
 
