@@ -18,6 +18,19 @@ class WeightedGraph<V>(vertices: List<V>) : Graph<V, WeightedEdge>(vertices) {
         addEdge(indexOf(first), indexOf(second), weight)
     }
 
+    fun removeEdge(u: Int, v: Int) {
+        edges[u].removeIf { it.v == v }
+        edges[v].removeIf { it.u == u }
+    }
+
+    fun removeEdge(edge: WeightedEdge) {
+        removeEdge(edge.u, edge.v)
+    }
+
+    fun removeEdge(first: V, second: V) {
+        removeEdge(indexOf(first), indexOf(second))
+    }
+
     fun mst(start: Int): List<WeightedEdge> {
         val result = LinkedList<WeightedEdge>()
         val vertexCount = getVertexCount()
@@ -124,8 +137,8 @@ class WeightedGraph<V>(vertices: List<V>) : Graph<V, WeightedEdge>(vertices) {
     }
 
     data class DijkstraNode(
-            val vertex: Int,
-            val distance: Double,
+        val vertex: Int,
+        val distance: Double,
     ) : Comparable<DijkstraNode> {
 
         override fun compareTo(other: DijkstraNode): Int {
@@ -136,18 +149,18 @@ class WeightedGraph<V>(vertices: List<V>) : Graph<V, WeightedEdge>(vertices) {
     }
 
     data class DijkstraResult(
-            val distances: DoubleArray,
-            val pathMap: Map<Int, WeightedEdge>,
+        val distances: DoubleArray,
+        val pathMap: Map<Int, WeightedEdge>,
     )
 }
 
 fun main() {
     val cityGraph2 = WeightedGraph(
-            listOf(
-                    "Seattle", "San Francisco", "Los Angeles", "Riverside", "Phoenix", "Chicago",
-                    "Boston", "New York", "Atlanta", "Miami", "Dallas", "Houston", "Detroit",
-                    "Philadelphia", "Washington"
-            )
+        listOf(
+            "Seattle", "San Francisco", "Los Angeles", "Riverside", "Phoenix", "Chicago",
+            "Boston", "New York", "Atlanta", "Miami", "Dallas", "Houston", "Detroit",
+            "Philadelphia", "Washington"
+        )
     )
     cityGraph2.addEdge("Seattle", "Chicago", 1737.0)
     cityGraph2.addEdge("Seattle", "San Francisco", 678.0)
@@ -175,6 +188,7 @@ fun main() {
     cityGraph2.addEdge("Boston", "New York", 190.0)
     cityGraph2.addEdge("New York", "Philadelphia", 81.0)
     cityGraph2.addEdge("Philadelphia", "Washington", 123.0)
+    cityGraph2.removeEdge("Los Angeles", "Riverside")
 
     val mst = cityGraph2.mst(0)
     cityGraph2.printWeightedPath(mst)
@@ -188,6 +202,7 @@ fun main() {
 
     println("${System.lineSeparator()}Shortest path from $srcVertex to $dstVertex:")
     val path = WeightedGraph.pathMapToPath(
-            cityGraph2.indexOf(srcVertex), cityGraph2.indexOf(dstVertex), dijkstraResult.pathMap)
+        cityGraph2.indexOf(srcVertex), cityGraph2.indexOf(dstVertex), dijkstraResult.pathMap
+    )
     cityGraph2.printWeightedPath(path)
 }
