@@ -5,30 +5,34 @@ import java.util.function.Consumer
 
 class WeightedGraph<V>(vertices: List<V>) : Graph<V, WeightedEdge>(vertices) {
 
-    fun addEdge(edge: WeightedEdge) {
+    fun addEdge(edge: WeightedEdge, bidirectional: Boolean = true) {
         edges[edge.u].add(edge)
-        edges[edge.v].add(edge.reversed())
+        if (bidirectional) {
+            edges[edge.v].add(edge.reversed())
+        }
     }
 
-    fun addEdge(u: Int, v: Int, weight: Double) {
-        addEdge(WeightedEdge(u, v, weight))
+    fun addEdge(u: Int, v: Int, weight: Double, bidirectional: Boolean = true) {
+        addEdge(WeightedEdge(u, v, weight), bidirectional)
     }
 
-    fun addEdge(first: V, second: V, weight: Double) {
-        addEdge(indexOf(first), indexOf(second), weight)
+    fun addEdge(first: V, second: V, weight: Double, bidirectional: Boolean = true) {
+        addEdge(indexOf(first), indexOf(second), weight, bidirectional)
     }
 
-    fun removeEdge(u: Int, v: Int) {
+    fun removeEdge(u: Int, v: Int, bidirectional: Boolean = true) {
         edges[u].removeIf { it.v == v }
-        edges[v].removeIf { it.u == u }
+        if (bidirectional) {
+            edges[v].removeIf { it.u == u }
+        }
     }
 
-    fun removeEdge(edge: WeightedEdge) {
-        removeEdge(edge.u, edge.v)
+    fun removeEdge(edge: WeightedEdge, bidirectional: Boolean = true) {
+        removeEdge(edge.u, edge.v, bidirectional)
     }
 
-    fun removeEdge(first: V, second: V) {
-        removeEdge(indexOf(first), indexOf(second))
+    fun removeEdge(first: V, second: V, bidirectional: Boolean = true) {
+        removeEdge(indexOf(first), indexOf(second), bidirectional)
     }
 
     fun mst(start: Int): List<WeightedEdge> {
@@ -188,7 +192,8 @@ fun main() {
     cityGraph2.addEdge("Boston", "New York", 190.0)
     cityGraph2.addEdge("New York", "Philadelphia", 81.0)
     cityGraph2.addEdge("Philadelphia", "Washington", 123.0)
-    cityGraph2.removeEdge("Los Angeles", "Riverside")
+
+    cityGraph2.addEdge("Boston", "Los Angeles", 1.0, false)
 
     val mst = cityGraph2.mst(0)
     cityGraph2.printWeightedPath(mst)
@@ -205,4 +210,11 @@ fun main() {
         cityGraph2.indexOf(srcVertex), cityGraph2.indexOf(dstVertex), dijkstraResult.pathMap
     )
     cityGraph2.printWeightedPath(path)
+
+    val reverseDijkstraResult = cityGraph2.dijkstra(dstVertex)
+    println("${System.lineSeparator()}Shortest path from $dstVertex to $srcVertex:")
+    val reversePath = WeightedGraph.pathMapToPath(
+        cityGraph2.indexOf(dstVertex), cityGraph2.indexOf(srcVertex), reverseDijkstraResult.pathMap
+    )
+    cityGraph2.printWeightedPath(reversePath)
 }
