@@ -1,5 +1,7 @@
 package com.artemkaxboy.leetcode
 
+import kotlin.system.measureTimeMillis
+
 class Leet {
 
     class Solution {
@@ -15,11 +17,20 @@ class Leet {
         private fun doWork(data: Data) {
             val solution = Solution()
 
-            val result = null //solution.process(data)
+            val result: Any
+            val time = measureTimeMillis {
+                result = ""
+//                result = Solution.run(data.input)
+            }
 
             println("Data:     ${data.input}")
             println("Expected: ${data.expected}")
-            println("Result:   $result\n")
+            println("Result:   $result")
+            println("Time:     $time\n")
+
+            if (data.expected != result) {
+                throw AssertionError("\nExpected: ${data.expected}\nActual:   $result")
+            }
         }
     }
 
