@@ -16,6 +16,10 @@ object LeetUtils {
         return stringToIntArray(this)
     }
 
+    fun String.toIntList(): List<Int> {
+        return toIntArray().asList()
+    }
+
     fun String.toCharArray(): CharArray {
         return stringToCharArray(this)
     }

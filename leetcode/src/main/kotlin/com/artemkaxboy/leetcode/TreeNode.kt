@@ -7,6 +7,8 @@ data class TreeNode(var `val`: Int) {
     var right: TreeNode? = null
 
     companion object {
+
+        @Deprecated("Use String.toTreeNode() instead")
         fun fromString(nodes: String): TreeNode? {
             val list = nodes.trim('[', ']').split(",")
                 .map { it.toIntOrNull() }
@@ -21,7 +23,10 @@ data class TreeNode(var `val`: Int) {
                 index += 2
             }
             return root
+        }
 
+        fun String.toTreeNode(): TreeNode? {
+            return fromString(this)
         }
     }
 }

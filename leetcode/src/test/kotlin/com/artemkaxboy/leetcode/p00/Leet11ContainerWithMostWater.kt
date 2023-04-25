@@ -11,13 +11,13 @@ import java.util.*
  * Runtime  1436ms   Beats   5.20%
  * Memory   51.1MB   Beats   22.45%
  */
-class Leet11ContainerWithMostWater : AbstractLeet() {
+private class Leet11ContainerWithMostWater : AbstractLeet() {
 
     class Solution {
         fun maxArea(height: IntArray): Int {
             val size = height.size
             val last = size - 1
-            
+
             val maxHeight = IntArray(size).apply { this[0] = height[0] }
             val maxIndex = IntArray(size).apply { this[0] = 0 }
             var maxVolume = 0
