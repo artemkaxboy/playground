@@ -4,6 +4,7 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/calculator" />
     <file type="web" url="file://$PROJECT_DIR$/demo" />
+    <file type="web" url="file://$PROJECT_DIR$/kotlin18" />
     <file type="web" url="file://$PROJECT_DIR$/leetcode" />
   </component>
   <component name="MavenProjectsManager">
