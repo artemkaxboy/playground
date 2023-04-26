@@ -2,7 +2,7 @@ package chapter5
 
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
-import java.util.Collections
+import java.util.*
 import java.util.zip.GZIPOutputStream
 import kotlin.random.Random
 
@@ -76,14 +76,14 @@ class ListCompression(
 
             val initialPopulation = mutableListOf<ListCompression>()
             val populationSize = 100
-            val generations = 100
+            val generations = 15
             val threshold = 1.0
 
             for (i in 1..populationSize) {
                 initialPopulation.add(randomInstance())
             }
 
-            val ga = GeneticAlgorithm(initialPopulation, 0.2, 0.7, GeneticAlgorithm.SelectionType.TOURNAMENT)
+            val ga = GeneticAlgorithm(initialPopulation, 0.2, 0.7, GeneticAlgorithm.SelectionType.TOURNAMENT_EX)
             val result = ga.run(generations, threshold)
             println(result)
         }

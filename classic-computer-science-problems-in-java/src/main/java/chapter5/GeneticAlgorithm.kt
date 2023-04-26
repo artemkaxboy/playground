@@ -33,6 +33,27 @@ class GeneticAlgorithm<C : Chromosome<C>>(
             .take(numPicks)
     }
 
+    private fun pickTournamentEx(numParticipants: Int, numPicks: Int): List<C> {
+        return population.apply { shuffle() }
+            .take(numParticipants)
+            .sortedDescending()
+            .drop(getDropCount())
+            .take(numPicks)
+    }
+
+    private fun getDropCount(limit: Int = 2): Int {
+        val seq = generateSequence(limit + 1) { i -> i - 1 }.takeWhile { it > 0 }.toList()
+        var random = Random.nextInt(seq.sum())
+
+        var i = 0
+        while (random >= 0) {
+            random -= seq[i]
+            i++
+        }
+
+        return i - 1
+    }
+
     private fun reproduceAndReplace() {
         val nextPopulation = ArrayList<C>()
         while (nextPopulation.size < population.size) {
@@ -43,9 +64,8 @@ class GeneticAlgorithm<C : Chromosome<C>>(
                     pickRoulette(wheel, 2)
                 }
 
-                SelectionType.TOURNAMENT -> {
-                    pickTournament(population.size / 2, 2)
-                }
+                SelectionType.TOURNAMENT -> pickTournament(population.size / 2, 2)
+                SelectionType.TOURNAMENT_EX -> pickTournamentEx(population.size / 2, 2)
             }
 
             if (Random.nextDouble() < crossoverChance) {
@@ -92,5 +112,6 @@ class GeneticAlgorithm<C : Chromosome<C>>(
     enum class SelectionType {
         ROULETTE,
         TOURNAMENT,
+        TOURNAMENT_EX,
     }
 }
