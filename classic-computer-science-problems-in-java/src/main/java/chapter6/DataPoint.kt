@@ -1,10 +1,12 @@
 package chapter6
 
+import java.io.File
 import kotlin.math.pow
 import kotlin.math.sqrt
 
 open class DataPoint(
-    initials: List<Double>
+    initials: List<Double>,
+    private val id: String = "id",
 ) {
 
     private val originals = initials
@@ -21,6 +23,29 @@ open class DataPoint(
     }
 
     override fun toString(): String {
-        return originals.toString()
+        return "$id: $originals"
+    }
+
+    companion object {
+
+        fun loadCsv(path: String): List<DataPoint> {
+
+            return File(path).useLines { lines ->
+                lines.drop(1)
+                    .map { it.split("\t") }
+                    .map { DataPoint(it.drop(1).map { v -> v.toDouble() }, it[0]) }
+                    .toList()
+            }
+        }
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val albums = loadCsv("classic-computer-science-problems-in-java/src/main/java/chapter6/albums.csv")
+            val kmeans = KMeans(2, albums)
+            val govClusters = kmeans.run(100)
+            for (clusterIndex in govClusters.indices) {
+                println("Cluster $clusterIndex: ${govClusters[clusterIndex].points}")
+            }
+        }
     }
 }
