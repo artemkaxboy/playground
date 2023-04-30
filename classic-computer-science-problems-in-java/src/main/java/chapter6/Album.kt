@@ -1,5 +1,7 @@
 package chapter6
 
+import java.awt.Color
+
 class Album(
     private val name: String,
     private val year: Int,
@@ -30,6 +32,24 @@ class Album(
             )
             val kMeans = KMeans(2, albums)
             val clusters = kMeans.run(100)
+
+            val canvas = Canvas(
+                640, 480,
+                albums.minOf { it.dimensions[0] }.rangeTo(albums.maxOf { it.dimensions[0] }),
+                albums.minOf { it.dimensions[1] }.rangeTo(albums.maxOf { it.dimensions[1] }),
+            )
+
+            val colors = listOf(Color.GREEN, Color.MAGENTA, Color.BLUE, Color.RED)
+            for (clusterIndex in clusters.indices) {
+
+                val color = colors[clusterIndex]
+                val point = clusters[clusterIndex].centroid
+                canvas.paintCentroid(point.dimensions[0], point.dimensions[1], color)
+
+                for (p in clusters[clusterIndex].points) {
+                    canvas.paintPoint(p.dimensions[0], p.dimensions[1], color)
+                }
+            }
 
             for (clusterIndex in clusters.indices) {
                 println(

@@ -1,5 +1,7 @@
 package chapter6
 
+import java.awt.Color
+
 class Governor(
     private val longitude: Double,
     private val age: Double,
@@ -69,8 +71,23 @@ class Governor(
 
             val kmeans = KMeans(2, governors)
             val govClusters = kmeans.run(100)
+
+            val canvas = Canvas(
+                640, 480,
+                governors.minOf { it.dimensions[0] }.rangeTo(governors.maxOf { it.dimensions[0] }),
+                governors.minOf { it.dimensions[1] }.rangeTo(governors.maxOf { it.dimensions[1] }),
+            )
+
+            val colors = listOf(Color.GREEN, Color.MAGENTA, Color.BLUE, Color.RED)
             for (clusterIndex in govClusters.indices) {
-                println("Cluster $clusterIndex: ${govClusters[clusterIndex].points}")
+
+                val color = colors[clusterIndex]
+                val point = govClusters[clusterIndex].centroid
+                canvas.paintCentroid(point.dimensions[0], point.dimensions[1], color)
+
+                for (p in govClusters[clusterIndex].points) {
+                    canvas.paintPoint(p.dimensions[0], p.dimensions[1], color)
+                }
             }
         }
     }
