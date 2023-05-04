@@ -3,20 +3,25 @@ package chapter6
 import kotlin.random.Random
 
 class KMeans<Point : DataPoint>(
-    k: Int,
+    k: Int? = null,
+    initCentroids: List<Point>? = null,
     private val points: List<Point>,
 ) {
 
     val clusters = mutableListOf<Cluster>()
 
     init {
-        if (k < 1) {
-            throw IllegalArgumentException("k must be >= 1")
-        }
+        val centroids = if (k != null) {
+            if (k < 1) {
+                throw IllegalArgumentException("k must be >= 1")
+            }
+            (1..k).map { randomPoint() }
+        } else initCentroids
+            ?: throw IllegalArgumentException("k must be >= 1 or initCentroids not empty")
+
         zScoreNormalize()
-        for (i in 0 until k) {
-            val randPoint = randomPoint()
-            val cluster = Cluster(mutableListOf<Point>(), randPoint)
+        for (c in centroids) {
+            val cluster = Cluster(mutableListOf(), c)
             clusters.add(cluster)
         }
     }
@@ -137,7 +142,7 @@ class KMeans<Point : DataPoint>(
             val point2 = DataPoint(listOf(2.0, 2.0, 5.0))
             val point3 = DataPoint(listOf(3.0, 1.5, 2.5))
 
-            val kmeansTest = KMeans(2, listOf(point1, point2, point3))
+            val kmeansTest = KMeans(2, points = listOf(point1, point2, point3))
             val testClusters = kmeansTest.run(100)
             for (clusterIndex in testClusters.indices) {
                 println("Cluster $clusterIndex: ${testClusters[clusterIndex].points}")

@@ -30,7 +30,7 @@ class Album(
                 Album("HIStory: Past, Present and Future, Book I", 1995, 148.58, 30.0),
                 Album("Invincible", 2001, 77.05, 16.0),
             )
-            val kMeans = KMeans(2, albums)
+            val kMeans = KMeans(2, points = albums)
             val clusters = kMeans.run(100)
 
             val canvas = Canvas(

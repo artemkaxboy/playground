@@ -41,7 +41,7 @@ open class DataPoint(
         @JvmStatic
         fun main(args: Array<String>) {
             val albums = loadCsv("classic-computer-science-problems-in-java/src/main/java/chapter6/albums.csv")
-            val kmeans = KMeans(2, albums)
+            val kmeans = KMeans(2, points = albums)
             val govClusters = kmeans.run(100)
             for (clusterIndex in govClusters.indices) {
                 println("Cluster $clusterIndex: ${govClusters[clusterIndex].points}")

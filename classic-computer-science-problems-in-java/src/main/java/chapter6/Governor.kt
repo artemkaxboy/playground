@@ -69,7 +69,7 @@ class Governor(
                 Governor(-107.30249, 55.0, "Wyoming")
             )
 
-            val kmeans = KMeans(2, governors)
+            val kmeans = KMeans(2, points = governors)
             val govClusters = kmeans.run(100)
 
             val canvas = Canvas(
