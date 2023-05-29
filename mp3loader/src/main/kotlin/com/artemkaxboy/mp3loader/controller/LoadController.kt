@@ -1,6 +1,10 @@
 package com.artemkaxboy.mp3loader.controller
 
 import com.artemkaxboy.mp3loader.client.RemoteAppClient
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -24,13 +28,32 @@ class LoadController(
     private val logger = mu.KotlinLogging.logger {}
     private val regex = Regex("https.*pl.txt")
 
+    @Operation(
+        summary = "Load mp3 files from remote source",
+        description = "Load mp3 files to local file system, pack them to tar.gz and return it as a response.",
+        tags = ["load"]
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Successful operation",
+        content = [
+            Content(
+                mediaType = "application/octet-stream",
+                schema = Schema(
+                    type = "string",
+                    format = "binary",
+                    description = "Tar.gz file with mp3 files"
+                )
+            )
+        ]
+    )
     @GetMapping("/load")
     fun load(@RequestParam source: String): ResponseEntity<ByteArray> {
         val mainPage = remoteAppClient.load(source)
         val mainPageBody = mainPage.body()!!.toString(Charsets.UTF_8)
         val playlistUrl = regex.find(mainPageBody)!!.value
         val playListResponse = remoteAppClient.load(playlistUrl, mapOf("referer" to "https://audiobook-mp3.com/"))
-        val tmpFile = Files.createTempFile("mp3loader", "tar.gz")
+        val tmpFile = Files.createTempFile("mp3loader", ".tar.gz")
         logger.info { "Saving to ${tmpFile.pathString}" }
 
         try {

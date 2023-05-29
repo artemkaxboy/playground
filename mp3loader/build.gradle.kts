@@ -19,7 +19,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jetty")
+    implementation("jakarta.servlet:jakarta.servlet-api:5.0.0")
+
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
@@ -29,14 +31,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     // openapi
-    implementation("org.springdoc:springdoc-openapi-ui:1.7.0")
-    implementation("org.springdoc:springdoc-openapi-kotlin:1.7.0")
-    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.7.0")
-    implementation("org.springdoc:springdoc-openapi-security:1.7.0")
-    implementation("org.springdoc:springdoc-openapi-data-rest:1.7.0")
-    implementation("org.springdoc:springdoc-openapi-hateoas:1.7.0")
-    implementation("org.springdoc:springdoc-openapi-common:1.7.0")
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.7.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 }
 
 tasks.withType<KotlinCompile> {
