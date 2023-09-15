@@ -20,7 +20,7 @@ class Leet {
             val result: Any
             val time = measureTimeMillis {
                 result = ""
-//                result = Solution.run(data.input)
+//                result = solution.run(data.input)
             }
 
             println("Data:     ${data.input}")
